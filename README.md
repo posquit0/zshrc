@@ -1,10 +1,7 @@
-# zshrc
-Zsh Configuration for nerds with oh-my-zsh
-
-<img src="https://avatars3.githubusercontent.com/u/11437969?v=3&s=200" align="left" width="128px" height="128px"/>
+<img src="https://raw.githubusercontent.com/posquit0/zshrc/master/icon.png?v=3&s=200" align="left" width="128px" height="128px"/>
 
 ### **Zshrc by posquit0**
-> *A Configuration of Zsh written by posquit0*
+> *Zsh Configuration for nerds written by posquit0*
 
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badge/)
