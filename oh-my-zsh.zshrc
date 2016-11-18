@@ -67,8 +67,7 @@
     # Just for fun
     nyan rand-quote
     # Custom or 3rd-party
-    alias-tips zsh-autosuggestions
-    resty motd
+    alias-tips motd zsh-autosuggestions
     # Note that zsh-syntax-highlighting must be the last plugin sourced
     zsh-syntax-highlighting
   )

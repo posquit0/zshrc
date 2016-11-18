@@ -32,9 +32,6 @@
   # Load alias list
   [ -f $HOME/.alias ] && source $HOME/.alias
 
-  # Always enable colored `grep` output
-  export GREP_OPTIONS="--color=auto";
-
   # Set term that supports 256 colors
   # export TERM=screen-256color
 
