@@ -54,3 +54,6 @@ export ZSH_HOME=$HOME/.zsh
     bindkey '^f' vi-forward-blank-word
   ## }}
 ### }}}
+
+# Load a custom configuration of zsh
+[ -f $HOME/.zshrc.custom ] && source $HOME/.zshrc.custom
