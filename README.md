@@ -17,7 +17,7 @@
 
 ```sh
 $ cd ~
-$ git clone https://github.com/posquit0/zshrc ~/.zsh
+$ git clone --recursive https://github.com/posquit0/zshrc ~/.zsh
 $ ln -s .zsh/zshrc .zshrc
 $ ln -s .zsh/zshenv .zshenv
 ```
