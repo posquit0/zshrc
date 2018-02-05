@@ -54,11 +54,13 @@
   plugins=(
     # Autocompletion or alias
     screen supervisor
-    git git-flow mercurial docker docker-compose aws
+    git git-extras git-flow mercurial
+    docker docker-compose kubectl
     mvn scala sbt
-    python pip pylint pep8 virtualenv virtualenvwrapper fabric
+    python pip pylint pep8 pyenv virtualenv virtualenvwrapper fabric celery
     gem
-    node npm cofee bower gulp
+    node npm yarn cofee bower gulp
+    redis-cli vagrant aws
     colored-man-pages
     # Useful tools
     colorize catimg command-not-found common-aliases
