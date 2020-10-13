@@ -26,4 +26,8 @@
   # Allow to move to beginning/end of line
   bindkey '^a' beginning-of-line
   bindkey '^e' end-of-line
+
+  # Allow to move to backward/forward of word
+  bindkey '^b' backward-word
+  bindkey '^f' forward-word
 ### }}}
