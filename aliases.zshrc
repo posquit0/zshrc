@@ -10,6 +10,7 @@ alias ..="cd ../"
 alias ...="cd ../../"
 alias ....="cd ../../../"
 alias ll="ls -l"
+alias grep="grep --color=auto"
 
 which htop > /dev/null \
   && alias top=htop
