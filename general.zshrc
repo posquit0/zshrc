@@ -67,3 +67,11 @@ fi
     export PATH_LOADED="true"
   fi
 ### }}}
+
+
+### Misc {{{
+  # Move to that directory, if a command is issued that can't be executed as a normal command and the command is the name of a directory.
+  setopt auto_cd
+  # Enable comments in interactive shell
+  setopt interactive_comments
+### }}}
