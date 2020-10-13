@@ -1,59 +1,30 @@
+# vi: filetype=zsh
 # .zshrc
 #
-# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # http://www.posquit0.com/
 
 
 # Set the path of zsh configuration directory
 export ZSH_HOME=$HOME/.zsh
 
-# Load a configuration of oh-my-zsh
-[ -f $ZSH_HOME/oh-my-zsh.zshrc ] && source $ZSH_HOME/oh-my-zsh.zshrc
-
 # Load a general configuration of zsh
 [ -f $ZSH_HOME/general.zshrc ] && source $ZSH_HOME/general.zshrc
 
+# Load a key mapping configuration of zsh
+[ -f $ZSH_HOME/key-mapping.zshrc ] && source $ZSH_HOME/key-mapping.zshrc
 
-### User Configuration {{{
-  # Ruby
-  # eval "$(rbenv init -)"
-  # Node.JS
-  [ -f ~/.tools/nvm/nvm.sh ] && source ~/.tools/nvm/nvm.sh
-  # Fzf(Fuzzy Finder)
-  # Usage: Ctrl+T, Ctrl+R, Alt+C
-  if [ -f ~/.fzf.zsh  ]; then
-    source ~/.fzf.zsh
-    bindkey '^T' fzf-completion
-    bindkey '^I' $fzf_default_completion
-  fi
-### }}}
+# Load a configuration of zsh plugins
+[ -f $ZSH_HOME/plugins.zshrc ] && source $ZSH_HOME/plugins.zshrc
 
+# Load a hook configuration of zsh
+[ -f $ZSH_HOME/hook.zshrc ] && source $ZSH_HOME/hook.zshrc
 
-### Plugin Configuration {{{
-  ## Plugin: History-Substring-Search {{
-    # Bind UP and DOWN arrow keys
-    zmodload zsh/terminfo
-    bindkey "$terminfo[kcuu1]" history-substring-search-up
-    bindkey "$terminfo[kcud1]" history-substring-search-down
-    # Bind UP and DOWN arrow keys (compatibility fallback
-    # for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-    # Bind P and N for EMACS mode
-    bindkey -M emacs '^P' history-substring-search-up
-    bindkey -M emacs '^N' history-substring-search-down
-    # Bind k and j for VI mode
-    bindkey -M vicmd 'k' history-substring-search-up
-    bindkey -M vicmd 'j' history-substring-search-down
-  ## }}
-  ## Plugin: Autosuggestions {{
-    # Use ctrl+t to toggle autosuggestions(hopefully this wont be needed as
-    # zsh-autosuggestions is designed to be unobtrusive)
-    # bindkey '^T' autosuggest-toggle
-    # Accept suggestions without leaving insert mode
-    bindkey '^f' vi-forward-blank-word
-  ## }}
-### }}}
+# Load an completion configuration of zsh
+[ -f $ZSH_HOME/completion.zshrc ] && source $ZSH_HOME/completion.zshrc
 
-# Load a custom configuration of zsh
-[ -f $HOME/.zshrc.custom ] && source $HOME/.zshrc.custom
+# Load an alias configuration of zsh
+[ -f $ZSH_HOME/aliases.zshrc ] && source $ZSH_HOME/aliases.zshrc
+
+# Load a local configuration of zsh
+[ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local

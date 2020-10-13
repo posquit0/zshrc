@@ -1,24 +1,25 @@
+# vi: filetype=zsh
 # general.zshrc
 #
-# Maintained by Claud D. Park <posquit0.bj@gmail.com>
+# Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # http://www.posquit0.com/
 
 
-### General {{{
-  # Define default $PATH and $MANPATH
-  export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
-  export MANPATH="/usr/local/man:$MANPATH"
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
+else
+  export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
+fi
 
-  # Extend $PATH with ~/.bin
-  [ -d $HOME/.bin ] && export PATH="$PATH:$HOME/.bin"
-
+### Locale {{{
   # You may need to manually set your language environment
-  export LANG="ko_KR.UTF-8"
-  export LANGUAGE="ko_KR:ko:en_US:en"
-  export LC_CTYPE="ko_KR.UTF-8"
-  export LC_NUMERIC="ko_KR.UTF-8"
+  export LANG="en_US.UTF-8"
+  export LANGUAGE=
+  export LC_CTYPE="en_US.UTF-8"
+  export LC_NUMERIC="en_US.UTF-8"
   export LC_TIME="en_US.UTF-8"
-  export LC_COLLATE="ko_KR.UTF-8"
+  export LC_COLLATE="C"
   export LC_MONETARY="ko_KR.UTF-8"
   export LC_MESSAGES="POSIX"
   export LC_PAPER="ko_KR.UTF-8"
@@ -28,23 +29,34 @@
   export LC_MEASUREMENT="ko_KR.UTF-8"
   export LC_IDENTIFICATION="ko_KR.UTF-8"
   export LC_ALL=
+### }}}
 
-  # Load alias list
-  [ -f $HOME/.alias ] && source $HOME/.alias
 
-  # Set term that supports 256 colors
-  # export TERM=screen-256color
+### History {{{
+  # Tell it where to save the history
+  export HISTFILE=~/.zsh_history
+  # The number of lines from $HISTFILE to read at the start of an interactive session
+  export HISTSIZE=10000
+  # The number of lines of your history you want saved
+  export SAVEHIST=10000
+### }}}
 
-  # Preferred editor for local and remote sessions
-  if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-  else
-    export EDITOR='nvim'
+
+### Path {{{
+  if [ ! "$PATH_LOADED" = "true" ]; then
+    # Extend $PATH with Homebrew's sbin directory
+    [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
+
+    # Extend $PATH with user's binary paths in home directory
+    [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
+    [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
+    [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
+
+    # Extend $PATH with Ruby Gem's bin directory
+    if which ruby > /dev/null && which gem > /dev/null; then
+      PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+    fi
+
+    export PATH_LOADED="true"
   fi
-
-  # Compilation flags
-  # export ARCHFLAGS="-arch x86_64"
-
-  # ssh
-  # export SSH_KEY_PATH="~/.ssh/rsa_id"
 ### }}}
