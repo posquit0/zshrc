@@ -9,7 +9,7 @@
 
 [**This Zsh configuration**](https://github.com/posquit0/zshrc) is written by [posquit0](https://github.com/posquit0/) to improve the environment in Zshell.
 
-- If you want to override my configuration or add more configuration, just create `~/.zshrc.custom` and write your configurations for zsh.
+- If you want to override my configuration or add more configuration, just create `~/.zshrc.local` and write your configurations for zsh.
 
 
 ## Getting Started
