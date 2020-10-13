@@ -14,6 +14,9 @@ alias ll="ls -l"
 which htop > /dev/null \
   && alias top=htop
 
+which docker > /dev/null \
+  && alias d=docker
+
 which kubectl > /dev/null \
   && alias k=kubectl
 
