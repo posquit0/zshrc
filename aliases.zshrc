@@ -12,6 +12,9 @@ alias ....="cd ../../../"
 alias ll="ls -l"
 alias grep="grep --color=auto"
 
+# Pass credentials by default
+alias ssh="ssh -A"
+
 which htop > /dev/null \
   && alias top=htop
 
