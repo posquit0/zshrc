@@ -26,5 +26,8 @@ export ZSH_HOME=$HOME/.zsh
 # Load an alias configuration of zsh
 [ -f $ZSH_HOME/aliases.zshrc ] && source $ZSH_HOME/aliases.zshrc
 
+# Load a general alias configuration
+[ -f $HOME/.alias ] && source $HOME/.alias
+
 # Load a local configuration of zsh
 [ -f $HOME/.zshrc.local ] && source $HOME/.zshrc.local
