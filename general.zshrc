@@ -34,11 +34,18 @@ fi
 
 ### History {{{
   # Tell it where to save the history
-  export HISTFILE=~/.zsh_history
+  export HISTFILE=$HOME/.zsh_history
   # The number of lines from $HISTFILE to read at the start of an interactive session
   export HISTSIZE=10000
   # The number of lines of your history you want saved
   export SAVEHIST=10000
+
+  # Ensure that commands are added to the history immediately
+  setopt inc_append_history
+  # Record the timestamp of each command in HISTFILE
+  setopt extended_history
+  # Skip duplicates while searching
+  setopt hist_find_no_dups
 ### }}}
 
 
