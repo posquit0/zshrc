@@ -5,7 +5,7 @@
 # http://www.posquit0.com/
 
 
-source ~/.zplug/init.zsh
+source $ZSH_HOME/zplug/init.zsh
 
 
 ### Plugin: Z {{{
