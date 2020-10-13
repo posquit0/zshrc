@@ -12,6 +12,7 @@ else
   export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
 fi
 
+
 ### Locale {{{
   # You may need to manually set your language environment
   export LANG="en_US.UTF-8"
@@ -65,6 +66,16 @@ fi
     fi
 
     export PATH_LOADED="true"
+  fi
+### }}}
+
+
+### SSH {{{
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    # The macOS allows us to store SSH keys in the keychain
+    # Use `ssh-add -K /path/to/key` to store SSH keys into the macOS keychain
+    # Load all SSH keys that have passphrases stored in the macOS keychain
+    # ssh-add -A
   fi
 ### }}}
 
