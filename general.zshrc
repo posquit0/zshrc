@@ -67,6 +67,11 @@ fi
 
     export PATH_LOADED="true"
   fi
+
+  # Go PATH
+  if which go > /dev/null; then
+    export GOPATH=$HOME/go
+  fi
 ### }}}
 
 
