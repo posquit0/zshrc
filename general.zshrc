@@ -64,6 +64,9 @@ fi
     if which ruby > /dev/null && which gem > /dev/null; then
       PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
     fi
+    if which rbenv > /dev/null; then
+      eval "$(rbenv init - zsh)"
+    fi
 
     export PATH_LOADED="true"
   fi
