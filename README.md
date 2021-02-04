@@ -49,4 +49,4 @@ And if you're feeling especially charitable, follow [posquit0](https://posquit0.
 
 Provided under the terms of the [MIT License](https://github.com/posquit0/zshrc/blob/master/LICENSE).
 
-Copyright © 2014-2020, [Byungjin Park](https://www.posquit0.com).
+Copyright © 2014-2021, [Byungjin Park](https://www.posquit0.com).
