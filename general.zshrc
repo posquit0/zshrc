@@ -12,6 +12,9 @@ else
   export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
 fi
 
+# Need to use gpg-agent with pinentry in macOS
+export GPG_TTY=$(tty)
+
 
 ### Locale {{{
   # You may need to manually set your language environment
