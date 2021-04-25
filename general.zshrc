@@ -59,13 +59,14 @@ fi
     [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
     [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
     [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
+    [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
 
+    if which rbenv > /dev/null; then
+      eval "$(rbenv init - zsh)"
+    fi
     # Extend $PATH with Ruby Gem's bin directory
     if which ruby > /dev/null && which gem > /dev/null; then
       PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
-    fi
-    if which rbenv > /dev/null; then
-      eval "$(rbenv init - zsh)"
     fi
 
     export PATH_LOADED="true"
