@@ -6,9 +6,17 @@
 
 autoload bashcompinit && bashcompinit
 
+# Enable `terraform` auto completion
+which terraform > /dev/null \
+  && complete -o nospace -C '/usr/local/bin/terraform' terraform
+
 # Enable `skaffold` auto completion
 which skaffold > /dev/null \
   && eval "$(skaffold completion zsh)"
+
+# Enable `kubebuilder` auto completion
+which kubebuilder > /dev/null \
+  && eval "$(kubebuilder completion zsh)"
 
 # Enable `aws` auto completion
 which aws > /dev/null \
