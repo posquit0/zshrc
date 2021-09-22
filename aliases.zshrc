@@ -31,7 +31,10 @@ which lazygit > /dev/null \
   && alias g=lazygit
 
 which nvim > /dev/null \
-  && alias n=nvim
+  && alias vim=nvim
 
 which terraform > /dev/null \
   && alias tf=terraform
+
+which packer > /dev/null \
+  && alias pkr=packer
