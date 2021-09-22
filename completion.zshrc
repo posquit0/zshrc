@@ -10,6 +10,10 @@ autoload bashcompinit && bashcompinit
 which terraform > /dev/null \
   && complete -o nospace -C '/usr/local/bin/terraform' terraform
 
+# Enable `packer` auto completion
+which packer > /dev/null \
+  && complete -o nospace -C '/usr/local/bin/packer' packer
+
 # Enable `skaffold` auto completion
 which skaffold > /dev/null \
   && eval "$(skaffold completion zsh)"
