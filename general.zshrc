@@ -72,6 +72,13 @@ export GPG_TTY=$(tty)
       PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
     fi
 
+    # Node.js
+    if which n > /dev/null; then
+      export N_PREFIX=$HOME/.n
+      # Extend $PATH with n's bin directory
+      export PATH="$N_PREFIX/bin:$PATH"
+    fi
+
     export PATH_LOADED="true"
   fi
 
