@@ -79,6 +79,10 @@ export GPG_TTY=$(tty)
       export PATH="$N_PREFIX/bin:$PATH"
     fi
 
+    if which kubectl > /dev/null; then
+      export PATH="$PATH:$HOME/.krew/bin"
+    fi
+
     export PATH_LOADED="true"
   fi
 
