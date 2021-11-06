@@ -38,3 +38,6 @@ which terraform > /dev/null \
 
 which packer > /dev/null \
   && alias pkr=packer
+
+which gopass > /dev/null \
+  && alias pass=gopass
