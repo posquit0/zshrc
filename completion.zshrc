@@ -32,6 +32,6 @@ which aws-vault > /dev/null \
 
 # Enable `pipenv` auto completion
 which pipenv > /dev/null \
-  && eval "$(pipenv --completion)"
+  && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 # Creating the virtualenv inside project’s directory
 export PIPENV_VENV_IN_PROJECT=1
