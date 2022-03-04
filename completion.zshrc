@@ -8,11 +8,11 @@ autoload bashcompinit && bashcompinit
 
 # Enable `terraform` auto completion
 which terraform > /dev/null \
-  && complete -o nospace -C '/usr/local/bin/terraform' terraform
+  && complete -o nospace -C '$(which terraform)' terraform
 
 # Enable `packer` auto completion
 which packer > /dev/null \
-  && complete -o nospace -C '/usr/local/bin/packer' packer
+  && complete -o nospace -C '$(which packer)' packer
 
 # Enable `skaffold` auto completion
 which skaffold > /dev/null \
@@ -24,7 +24,7 @@ which kubebuilder > /dev/null \
 
 # Enable `aws` auto completion
 which aws > /dev/null \
-  && complete -C '/usr/local/bin/aws_completer' aws
+  && complete -C '$(which aws_completer)' aws
 
 # Enable `aws-vault` auto completion
 which aws-vault > /dev/null \
