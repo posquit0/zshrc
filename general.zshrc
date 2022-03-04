@@ -53,6 +53,14 @@ export GPG_TTY=$(tty)
 ### }}}
 
 
+### Homebrew {{{
+  if [ ! "$HOMEBREW_LOADED" = "true" ]; then
+    eval $(/opt/homebrew/bin/brew shellenv)
+    export HOMEBREW_LOADED="true"
+  fi
+### }}}
+
+
 ### Path {{{
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with Homebrew's sbin directory
