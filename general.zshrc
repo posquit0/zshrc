@@ -118,14 +118,12 @@ export GPG_TTY=$(tty)
   setopt interactive_comments
 
   if which aws-vault > /dev/null; then
-    if which pass > /dev/null; then
+    if which gopass > /dev/null; then
       export AWS_VAULT_BACKEND=pass
       export AWS_VAULT_PROMPT=pass
-      export AWS_VAULT_PASS_PREFIX=aws-vault/
-    fi
-    if which gopass > /dev/null; then
       export AWS_VAULT_PASS_CMD=gopass
       export AWS_VAULT_PASS_PASSWORD_STORE_DIR=$HOME/.local/share/gopass/stores/root
+      export AWS_VAULT_PASS_PREFIX=aws-vault/
     fi
   fi
 ### }}}
