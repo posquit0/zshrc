@@ -39,5 +39,8 @@ which terraform > /dev/null \
 which packer > /dev/null \
   && alias pkr=packer
 
+which pinentry-mac > /dev/null \
+  && alias pinentry=pinentry-mac
+
 which gopass > /dev/null \
   && alias pass=gopass
