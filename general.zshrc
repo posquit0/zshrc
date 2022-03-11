@@ -54,9 +54,11 @@ export GPG_TTY=$(tty)
 
 
 ### Homebrew {{{
-  if [ ! "$HOMEBREW_LOADED" = "true" ]; then
-    eval $(/opt/homebrew/bin/brew shellenv)
-    export HOMEBREW_LOADED="true"
+  if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
+    if [ ! "$HOMEBREW_LOADED" = "true" ]; then
+      eval $(/opt/homebrew/bin/brew shellenv)
+      export HOMEBREW_LOADED="true"
+    fi
   fi
 ### }}}
 
