@@ -65,6 +65,9 @@ export GPG_TTY=$(tty)
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with Homebrew's sbin directory
     [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
+    [ ! "$PATH" = "*/usr/local/bin*" ] && export PATH="/usr/local/bin:$PATH"
+    [ ! "$PATH" = "*/usr/sbin*" ] && export PATH="/usr/sbin:$PATH"
+    [ ! "$PATH" = "*/usr/bin*" ] && export PATH="/usr/bin:$PATH"
 
     # Extend $PATH with user's binary paths in home directory
     [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
