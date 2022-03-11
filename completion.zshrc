@@ -6,6 +6,10 @@
 
 autoload bashcompinit && bashcompinit
 
+if which brew > /dev/null; then
+  fpath+=$(brew --prefix)/share/zsh/site-functions
+fi
+
 # Enable `terraform` auto completion
 which terraform > /dev/null \
   && complete -o nospace -C '$(which terraform)' terraform
@@ -35,3 +39,5 @@ which pipenv > /dev/null \
   && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 # Creating the virtualenv inside project’s directory
 export PIPENV_VENV_IN_PROJECT=1
+
+autoload -Uz compinit && compinit
