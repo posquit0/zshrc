@@ -53,16 +53,6 @@ export GPG_TTY=$(tty)
 ### }}}
 
 
-### Homebrew {{{
-  if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
-    if [ ! "$HOMEBREW_LOADED" = "true" ]; then
-      eval $(/opt/homebrew/bin/brew shellenv)
-      export HOMEBREW_LOADED="true"
-    fi
-  fi
-### }}}
-
-
 ### Path {{{
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with Homebrew's sbin directory
@@ -76,6 +66,15 @@ export GPG_TTY=$(tty)
     [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
     [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
     [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
+
+    ### Homebrew {{{
+      if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
+        if [ ! "$HOMEBREW_LOADED" = "true" ]; then
+          eval $(/opt/homebrew/bin/brew shellenv)
+          export HOMEBREW_LOADED="true"
+        fi
+      fi
+    ### }}}
 
     if which rbenv > /dev/null; then
       eval "$(rbenv init - zsh)"
