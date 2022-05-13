@@ -7,3 +7,6 @@
 
 # To make it work on Ubuntu
 DEBIAN_PREVENT_KEYBOARD_CHANGES=yes
+
+# Use ~/.config directory
+XDG_CONFIG_HOME="$HOME/.config"

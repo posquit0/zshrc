@@ -14,6 +14,8 @@ fi
 
 # Need to use gpg-agent with pinentry in macOS
 export GPG_TTY=$(tty)
+# Use ~/.config directory
+export XDG_CONFIG_HOME="$HOME/.config"
 
 
 ### Locale {{{
