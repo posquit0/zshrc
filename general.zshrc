@@ -63,12 +63,6 @@ export XDG_CONFIG_HOME="$HOME/.config"
     [ ! "$PATH" = "*/usr/sbin*" ] && export PATH="/usr/sbin:$PATH"
     [ ! "$PATH" = "*/usr/bin*" ] && export PATH="/usr/bin:$PATH"
 
-    # Extend $PATH with user's binary paths in home directory
-    [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
-    [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
-    [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
-    [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
-
     ### Homebrew {{{
       if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
         if [ ! "$HOMEBREW_LOADED" = "true" ]; then
@@ -77,6 +71,12 @@ export XDG_CONFIG_HOME="$HOME/.config"
         fi
       fi
     ### }}}
+
+    # Extend $PATH with user's binary paths in home directory
+    [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
+    [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
+    [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
+    [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
 
     if which rbenv > /dev/null; then
       eval "$(rbenv init - zsh)"
@@ -131,5 +131,9 @@ export XDG_CONFIG_HOME="$HOME/.config"
       export AWS_VAULT_PASS_PASSWORD_STORE_DIR=$HOME/.local/share/gopass/stores/root
       export AWS_VAULT_PASS_PREFIX=aws-vault/
     fi
+  fi
+
+  if which nvim > /dev/null; then
+    export KUBE_EDITOR=nvim
   fi
 ### }}}
