@@ -12,6 +12,9 @@ alias ....="cd ../../../"
 alias ll="ls -l"
 alias grep="grep --color=auto"
 
+# Use python3 as default
+alias python=python3
+
 # Pass credentials by default
 alias ssh="ssh -A"
 
