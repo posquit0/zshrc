@@ -58,10 +58,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
 ### Path {{{
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with Homebrew's sbin directory
-    [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
-    [ ! "$PATH" = "*/usr/local/bin*" ] && export PATH="/usr/local/bin:$PATH"
     [ ! "$PATH" = "*/usr/sbin*" ] && export PATH="/usr/sbin:$PATH"
     [ ! "$PATH" = "*/usr/bin*" ] && export PATH="/usr/bin:$PATH"
+    [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
+    [ ! "$PATH" = "*/usr/local/bin*" ] && export PATH="/usr/local/bin:$PATH"
 
     ### Homebrew {{{
       if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
