@@ -17,6 +17,7 @@
 ```sh
 $ cd ~
 $ git clone --recursive https://github.com/posquit0/zshrc ~/.zsh
+
 $ ln -s .zsh/zshrc .zshrc
 $ ln -s .zsh/zshenv .zshenv
 ```
@@ -39,14 +40,15 @@ And if you're feeling especially charitable, follow [posquit0](https://posquit0.
 
 ## See Also
 
+- [brewfile](https://github.com/posquit0/brewfile) - Brewfile to install softwares in macOS for engineers.
 - [dotfiles](https://github.com/posquit0/dotfiles) - Awesome configurations for the development environments.
+- [gitconfig](https://github.com/posquit0/gitconfig) - Git configurations.
 - [vimrc](https://github.com/posquit0/vimrc) - Vim Configuration for nerds with vim-plug.
 - [tmux-conf](https://github.com/posquit0/tmux-conf) - TMUX Configuration for nerds with tpm.
-- [gitconfig](https://github.com/posquit0/gitconfig) - Git configurations.
 
 
 ## License
 
 Provided under the terms of the [MIT License](https://github.com/posquit0/zshrc/blob/master/LICENSE).
 
-Copyright © 2014-2021, [Byungjin Park](https://www.posquit0.com).
+Copyright © 2014-2023, [Byungjin Park](https://www.posquit0.com).
