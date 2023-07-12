@@ -8,12 +8,6 @@
 source $ZSH_HOME/zplug/init.zsh
 
 
-### Plugin: Z {{{
-  # Navigate your most used directories based on frecency
-  zplug "rupa/z", as:plugin, \
-    use:"z.sh"
-### }}}
-
 ### Plugin: Autosuggentions {{{
   # Fish-like autosuggestions for zsh
   zplug "zsh-users/zsh-autosuggestions", as:plugin, \

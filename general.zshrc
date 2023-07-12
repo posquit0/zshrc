@@ -137,4 +137,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   if which nvim > /dev/null; then
     export KUBE_EDITOR=nvim
   fi
+
+  if which zoxide > /dev/null; then
+    eval "$(zoxide init zsh)"
+  fi
 ### }}}
