@@ -114,6 +114,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
     # Load all SSH keys that have passphrases stored in the macOS keychain
     # ssh-add -A
   fi
+  [ -d $HOME/.1password ] && export SSH_AUTH_SOCK=~/.1password/agent.sock
 ### }}}
 
 
