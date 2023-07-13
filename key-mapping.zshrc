@@ -2,7 +2,7 @@
 # key-mapping.zshrc
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
-# http://www.posquit0.com/
+# https://www.posquit0.com/
 
 
 ### Vi Mode {{{

@@ -2,7 +2,7 @@
 # general.zshrc
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
-# http://www.posquit0.com/
+# https://www.posquit0.com/
 
 
 # Preferred editor for local and remote sessions

@@ -2,7 +2,7 @@
 # .zshrc
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
-# http://www.posquit0.com/
+# https://www.posquit0.com/
 
 
 # Set the path of zsh configuration directory

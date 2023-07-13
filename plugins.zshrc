@@ -2,7 +2,7 @@
 # plugins.zshrc
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
-# http://www.posquit0.com/
+# https://www.posquit0.com/
 
 
 source $ZSH_HOME/zplug/init.zsh
@@ -17,7 +17,7 @@ source $ZSH_HOME/zplug/init.zsh
   function config-zplug-zsh-autosuggestions() {
     # Color to use when highlighting suggestion
     # Uses format of `region_highlight`
-    # More info: http://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
+    # More info: https://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
     # ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=2'
     # Accept suggestions without leaving insert mode
     bindkey '^f' vi-forward-blank-word

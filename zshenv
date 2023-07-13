@@ -2,7 +2,7 @@
 # .zshenv
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
-# http://www.posquit0.com/
+# https://www.posquit0.com/
 
 
 # To make it work on Ubuntu
