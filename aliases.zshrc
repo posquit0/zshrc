@@ -18,6 +18,9 @@ alias python=python3
 # Pass credentials by default
 alias ssh="ssh -A"
 
+which chezmoi > /dev/null \
+  && alias cm=chezmoi
+
 which htop > /dev/null \
   && alias top=htop
 
