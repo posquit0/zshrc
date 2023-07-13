@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/posquit0/zshrc/master/icon.png?v=3&s=200" align="left" width="128px" height="128px"/>
+<img src="https://raw.githubusercontent.com/posquit0/zshrc/main/icon.png?v=3&s=200" align="left" width="128px" height="128px"/>
 
 ### Zshrc by posquit0
 > *Zsh Configuration for nerds written by posquit0*
@@ -49,6 +49,6 @@ And if you're feeling especially charitable, follow [posquit0](https://posquit0.
 
 ## License
 
-Provided under the terms of the [MIT License](https://github.com/posquit0/zshrc/blob/master/LICENSE).
+Provided under the terms of the [MIT License](https://github.com/posquit0/zshrc/blob/main/LICENSE).
 
 Copyright © 2014-2023, [Byungjin Park](https://www.posquit0.com).
