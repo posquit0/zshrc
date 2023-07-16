@@ -19,7 +19,7 @@ alias python=python3
 alias ssh="ssh -A"
 
 which chezmoi > /dev/null \
-  && alias cm=chezmoi
+  && alias cz=chezmoi
 
 which htop > /dev/null \
   && alias top=htop
