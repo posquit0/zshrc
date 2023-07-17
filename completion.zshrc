@@ -22,6 +22,10 @@ which packer > /dev/null \
 which skaffold > /dev/null \
   && eval "$(skaffold completion zsh)"
 
+# Enable `kaf` auto completion
+which kaf > /dev/null \
+  && kaf completion zsh > "${fpath[1]}/_kaf"
+
 # Enable `kubebuilder` auto completion
 which kubebuilder > /dev/null \
   && eval "$(kubebuilder completion zsh)"
