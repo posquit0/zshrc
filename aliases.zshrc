@@ -21,6 +21,9 @@ alias ssh="ssh -A"
 which chezmoi > /dev/null \
   && alias cz=chezmoi
 
+which zellij > /dev/null \
+  && alias zj=zellij
+
 which htop > /dev/null \
   && alias top=htop
 
