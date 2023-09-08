@@ -12,3 +12,7 @@ load-tfswitch() {
 }
 which tfswitch > /dev/null \
   && add-zsh-hook chpwd load-tfswitch
+
+# Enable `direnv` hook
+which direnv > /dev/null \
+  && eval "$(direnv hook zsh)"
