@@ -17,6 +17,9 @@ export ZSH_HOME=$HOME/.zsh
 # Load a configuration of zsh plugins
 [ -f $ZSH_HOME/plugins.zshrc ] && source $ZSH_HOME/plugins.zshrc
 
+# Load a prompt of zsh
+[ -f $ZSH_HOME/prompt.zshrc ] && source $ZSH_HOME/prompt.zshrc
+
 # Load a hook configuration of zsh
 [ -f $ZSH_HOME/hook.zshrc ] && source $ZSH_HOME/hook.zshrc
 

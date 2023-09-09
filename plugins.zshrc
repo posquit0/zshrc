@@ -84,7 +84,7 @@ source $ZSH_HOME/zplug/init.zsh
 
 # zplug "b4b4r07/zsh-vimode-visual", defer:3
 
-zplug "cusxio/delta-prompt", use:"delta.zsh"
+# zplug "cusxio/delta-prompt", use:"delta.zsh"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
