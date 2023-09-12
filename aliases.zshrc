@@ -33,8 +33,8 @@ which docker > /dev/null \
 which kubectl > /dev/null \
   && alias k=kubectl
 
-which exa > /dev/null \
-  && alias ls=exa
+which eza > /dev/null \
+  && alias ls=eza
 
 which lazygit > /dev/null \
   && alias g=lazygit
