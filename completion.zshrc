@@ -10,6 +10,9 @@ if which brew > /dev/null; then
   fpath+=$(brew --prefix)/share/zsh/site-functions
 fi
 
+mkdir -p "$HOME/.zfunc"
+fpath+="$HOME/.zfunc"
+
 # Enable `terraform` auto completion
 which terraform > /dev/null \
   && complete -o nospace -C '$(which terraform)' terraform
@@ -24,7 +27,7 @@ which skaffold > /dev/null \
 
 # Enable `kaf` auto completion
 which kaf > /dev/null \
-  && kaf completion zsh > "${fpath[1]}/_kaf"
+  && kaf completion zsh > "$HOME/.zfunc/_kaf"
 
 # Enable `kubebuilder` auto completion
 which kubebuilder > /dev/null \
@@ -37,6 +40,10 @@ which aws > /dev/null \
 # Enable `aws-vault` auto completion
 which aws-vault > /dev/null \
   && eval "$(aws-vault --completion-script-zsh)"
+
+# Enable `poetry` auto completion
+which poetry > /dev/null \
+  && poetry completions zsh > "$HOME/.zfunc/_poetry"
 
 # Enable `pipenv` auto completion
 which pipenv > /dev/null \
