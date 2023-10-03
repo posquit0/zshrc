@@ -6,9 +6,8 @@
 
 
 load-tfswitch() {
-  if [ -f ".terraform-version" ]; then
-    tfswitch
-  fi
+  [ -f ".terraform-version" ] && tfswitch
+  [ -f "versions.tf" ] && tfswitch
 }
 which tfswitch > /dev/null \
   && add-zsh-hook chpwd load-tfswitch
