@@ -33,6 +33,9 @@ which docker > /dev/null \
 which kubectl > /dev/null \
   && alias k=kubectl
 
+which switch > /dev/null \
+  && alias ks=switch
+
 which eza > /dev/null \
   && alias ls=eza
 

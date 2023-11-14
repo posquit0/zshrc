@@ -33,6 +33,12 @@ which kaf > /dev/null \
 which kubebuilder > /dev/null \
   && eval "$(kubebuilder completion zsh)"
 
+if which switcher > /dev/null; then
+  source <(switcher init zsh)
+  source <(compdef _switcher switch)
+  source <(switch completion zsh)
+fi
+
 # Enable `aws` auto completion
 which aws > /dev/null \
   && complete -C '$(which aws_completer)' aws
