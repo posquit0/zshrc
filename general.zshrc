@@ -70,12 +70,19 @@ export XDG_CONFIG_HOME="$HOME/.config"
           export HOMEBREW_LOADED="true"
         fi
       fi
+      if [[ $OSTYPE == darwin* && $CPUTYPE == i386 ]]; then
+        if [ ! "$HOMEBREW_LOADED" = "true" ]; then
+          eval $(/usr/local/bin/brew shellenv)
+          export HOMEBREW_LOADED="true"
+        fi
+      fi
     ### }}}
 
     # Extend $PATH with user's binary paths in home directory
     [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
     [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
     [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
+    [ -d $HOME/scripts ] && export PATH="$HOME/scripts:$PATH"
     [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
 
     if which rbenv > /dev/null; then
