@@ -17,6 +17,10 @@ fpath+="$HOME/.zfunc"
 which terraform > /dev/null \
   && complete -o nospace -C '$(which terraform)' terraform
 
+# Enable `volta` auto completion
+which volta > /dev/null \
+  && volta completions zsh > "$HOME/.zfunc/_volta"
+
 # Enable `packer` auto completion
 which packer > /dev/null \
   && complete -o nospace -C '$(which packer)' packer

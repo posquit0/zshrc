@@ -94,10 +94,11 @@ export XDG_CONFIG_HOME="$HOME/.config"
     fi
 
     # Node.js
-    if which n > /dev/null; then
-      export N_PREFIX=$HOME/.n
-      # Extend $PATH with n's bin directory
-      export PATH="$N_PREFIX/bin:$PATH"
+    if which volta > /dev/null; then
+      export VOLTA_HOME=$HOME/.volta
+
+      # Extend $PATH with volta's bin directory
+      export PATH="$VOLTA_HOME/bin:$PATH"
     fi
 
     if which kubectl > /dev/null; then
