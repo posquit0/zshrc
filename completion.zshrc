@@ -60,5 +60,3 @@ which pipenv > /dev/null \
   && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 # Creating the virtualenv inside project’s directory
 export PIPENV_VENV_IN_PROJECT=1
-
-autoload -Uz compinit && compinit

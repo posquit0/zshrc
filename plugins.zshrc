@@ -4,98 +4,92 @@
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # https://www.posquit0.com/
 
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+[ ! -d $ZINIT_HOME ] && mkdir -p "$(dirname $ZINIT_HOME)"
+[ ! -d $ZINIT_HOME/.git ] && git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+source "${ZINIT_HOME}/zinit.zsh"
 
-source $ZSH_HOME/zplug/init.zsh
-
-
-### Plugin: Autosuggentions {{{
-  # Fish-like autosuggestions for zsh
-  zplug "zsh-users/zsh-autosuggestions", as:plugin, \
-    defer:2, \
-    hook-load:"config-zplug-zsh-autosuggestions"
-
-  function config-zplug-zsh-autosuggestions() {
-    # Color to use when highlighting suggestion
-    # Uses format of `region_highlight`
-    # More info: https://zsh.sourceforge.net/Doc/Release/Zsh-Line-Editor.html#Zle-Widgets
-    # ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=2'
-    # Accept suggestions without leaving insert mode
-    bindkey '^f' vi-forward-blank-word
-  }
-### }}}
-
-### Plugin: Completions {{{
-  # Additional completion definitions for Zsh
-  zplug "zsh-users/zsh-completions", as:plugin
-### }}}
-
-### Plugin: Alias Tips {{{
-  # Help remembering those aliases you defined once
-  zplug "djui/alias-tips"
-### }}}
-
-### Plugin: Calc {{{
-  # Support for basic math
-  zplug "arzzen/calc.plugin.zsh"
-### }}}
+zinit snippet OMZ::plugins/git/git.plugin.zsh
 
 ### Plugin: Fast Syntax Highlighting {{{
   # Fish shell-like syntax highlighting for Zsh
   # INFO: Alternative of `zsh-syntax-highlighting`
-  zplug "zdharma/fast-syntax-highlighting", as:plugin, \
-    defer:2, \
-    hook-load:"config-zplug-fast-syntax-highlighting"
 
-  function config-zplug-fast-syntax-highlighting() {
-    fast-theme default -q
-  }
+  zinit ice wait lucid atinit"zpcompinit; zpcdreplay"
+  zinit light zdharma-continuum/fast-syntax-highlighting
+### }}}
+
+### Plugin: Autosuggentions {{{
+  # Fish-like autosuggestions for zsh
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=244"
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  ZSH_AUTOSUGGEST_USE_ASYNC=true
+
+  zinit ice wait"0b" lucid atload'
+    _zsh_autosuggest_start
+    bindkey "^f" forward-word
+    bindkey "^e" autosuggest-execute
+    # bindkey "^ " autosuggest-accept
+  '
+  zinit light zsh-users/zsh-autosuggestions
+### }}}
+
+### Plugin: Completions {{{
+  # Additional completion definitions for Zsh
+  zinit ice wait lucid blockf atpull'zinit creinstall -q .'
+  zinit light zsh-users/zsh-completions
+### }}}
+
+### Plugin: Alias Tips {{{
+  # Help remembering those aliases you defined once
+  zinit ice from'gh-r' as 'program'
+  zinit light decayofmind/zsh-fast-alias-tips
+  export ZSH_FAST_ALIAS_TIPS_PREFIX="💡 Alias: $(tput bold)"
+### }}}
+
+### Plugin: Calc {{{
+  # Support for basic math
+  zinit ice wait lucid
+  zinit light arzzen/calc.plugin.zsh
 ### }}}
 
 ### Plugin: History Substring Search {{{
   # ZSH port of Fish history search
   # INFO: zsh-history-substring-search should be after zsh-syntax-highlighting
-  zplug "zsh-users/zsh-history-substring-search", as:plugin, \
-    defer:3, \
-    hook-load:"config-zplug-zsh-history-substring-search"
-
-  function config-zplug-zsh-history-substring-search() {
+  zinit ice wait lucid atload'
+    bindkey "^P" history-substring-search-up
+    bindkey "^N" history-substring-search-down
     # Bind UP and DOWN arrow keys
     zmodload zsh/terminfo
     bindkey "$terminfo[kcuu1]" history-substring-search-up
     bindkey "$terminfo[kcud1]" history-substring-search-down
     # Bind UP and DOWN arrow keys (compatibility fallback
     # for Ubuntu 12.04, Fedora 21, and MacOSX 10.9 users)
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-    # Bind P and N for EMACS mode
-    bindkey -M emacs '^P' history-substring-search-up
-    bindkey -M emacs '^N' history-substring-search-down
+    bindkey "^[[A" history-substring-search-up
+    bindkey "^[[B" history-substring-search-down
     # Bind k and j for VI mode
-    bindkey -M vicmd 'k' history-substring-search-up
-    bindkey -M vicmd 'j' history-substring-search-down
-  }
+    bindkey -M vicmd "k" history-substring-search-up
+    bindkey -M vicmd "j" history-substring-search-down
+  '
+  zinit load 'zsh-users/zsh-history-substring-search'
 ### }}}
 
-### Plugin: Python Auto Switch Virtualenv {{{
-  # Automatically switch python virtualenvs as you move between directories
-  # Commands: mkvenv, rmvenv
-  zplug "MichaelAquilina/zsh-autoswitch-virtualenv"
+### Plugin: VI Mode {{{
+  # A better and friendly vi(vim) mode plugin for ZSH.
+  zinit ice depth=1
+  zinit light jeffreytse/zsh-vi-mode
 ### }}}
 
-# zplug "b4b4r07/zsh-vimode-visual", defer:3
+zinit ice wait"2" lucid atload'
+  export ZSH_COPILOT_AI_PROVIDER=anthropic
+  export ZSH_COPILOT_KEY=^z
+'
+zinit light Myzel394/zsh-copilot
 
-# zplug "cusxio/delta-prompt", use:"delta.zsh"
+### Integration: FZF {{{
+  zinit ice lucid wait"0"
+  zinit snippet "$(brew --prefix)/opt/fzf/shell/completion.zsh"
 
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  else
-    echo
-  fi
-fi
-
-# Then, source plugins and add commands to $PATH
-zplug load
-unfunction -m "config-zplug-*"
+  zinit ice lucid wait"0" 
+  zinit snippet "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+### }}}
