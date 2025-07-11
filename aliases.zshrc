@@ -10,7 +10,11 @@ alias ..="cd ../"
 alias ...="cd ../../"
 alias ....="cd ../../../"
 alias ll="ls -l"
+alias la="ls -A"
+alias lal="ls -Al"
 alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
 
 # Use python3 as default
 alias python=python3
