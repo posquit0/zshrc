@@ -47,12 +47,6 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   export ZSH_FAST_ALIAS_TIPS_PREFIX="💡 Alias: $(tput bold)"
 ### }}}
 
-### Plugin: Calc {{{
-  # Support for basic math
-  zinit ice wait lucid
-  zinit light arzzen/calc.plugin.zsh
-### }}}
-
 ### Plugin: History Substring Search {{{
   # ZSH port of Fish history search
   # INFO: zsh-history-substring-search should be after zsh-syntax-highlighting
@@ -80,11 +74,13 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   zinit light jeffreytse/zsh-vi-mode
 ### }}}
 
-zinit ice wait"2" lucid atload'
-  export ZSH_COPILOT_AI_PROVIDER=anthropic
-  export ZSH_COPILOT_KEY=^z
-'
-zinit light Myzel394/zsh-copilot
+### Plugin: GitHub Copilot {{{
+  ZSH_GH_COPILOT_NO_CHECK=1
+  # GitHub Copilot for your command line
+  zinit light loiccoyle/zsh-github-copilot
+  bindkey '»' zsh_gh_copilot_explain  # bind Option+shift+\ to explain
+  bindkey '«' zsh_gh_copilot_suggest  # bind Option+\ to suggest
+### }}}
 
 ### Integration: FZF {{{
   zinit ice lucid wait"0"
@@ -92,4 +88,27 @@ zinit light Myzel394/zsh-copilot
 
   zinit ice lucid wait"0" 
   zinit snippet "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+### }}}
+
+### Plugin: FZF Tab {{{
+  # Replace zsh's default completion selection menu with fzf!
+  zstyle ':fzf-tab:*' fzf-command fzf
+  zstyle ':fzf-tab:*' fzf-flags '--height=50%' '--layout=reverse' '--info=inline'
+
+  # 프리뷰 창 설정
+  zstyle ':fzf-tab:*' preview-window 'right:50%:wrap'
+  zstyle ':fzf-tab:complete:*:*' fzf-preview \
+    '(bat --color=always --style=numbers,changes $realpath 2>/dev/null || \
+    ls -1 -la --color=always $realpath 2>/dev/null || \
+    echo "No preview available") 2>/dev/null | head -200'
+
+  # 플러그인 로드
+  zinit ice wait"0c" lucid blockf atpull'zinit creinstall -q .'
+  zinit light Aloxaf/fzf-tab
+### }}}
+
+### Plugin: Calc {{{
+  # Support for basic math
+  zinit ice wait"1" lucid
+  zinit light arzzen/calc.plugin.zsh
 ### }}}
