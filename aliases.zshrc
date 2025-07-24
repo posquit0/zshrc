@@ -60,3 +60,6 @@ which pinentry-mac > /dev/null \
 
 which gopass > /dev/null \
   && alias pass=gopass
+
+which claude-squad > /dev/null \
+  && alias cs=claude-squad
