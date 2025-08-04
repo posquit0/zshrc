@@ -63,3 +63,6 @@ which gopass > /dev/null \
 
 which claude-squad > /dev/null \
   && alias cs=claude-squad
+
+which grealpath > /dev/null \
+  && alias realpath=grealpath
