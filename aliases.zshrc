@@ -22,6 +22,12 @@ alias python=python3
 # Pass credentials by default
 alias ssh="ssh -A"
 
+[ -f /usr/local/bin/brew ] \
+  && alias ibrew=/usr/local/bin/brew
+
+[ -f /opt/homebrew/bin/brew ] \
+  && alias abrew=/opt/homebrew/bin/brew
+
 which chezmoi > /dev/null \
   && alias cz=chezmoi
 
