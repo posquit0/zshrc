@@ -15,3 +15,7 @@ which tfswitch > /dev/null \
 # Enable `direnv` hook
 which direnv > /dev/null \
   && eval "$(direnv hook zsh)"
+
+# Enable `mise` hook
+which mise > /dev/null \
+  && eval "$(mise activate zsh)"
