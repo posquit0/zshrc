@@ -13,6 +13,10 @@ fi
 mkdir -p "$HOME/.zfunc"
 fpath+="$HOME/.zfunc"
 
+# Enable `mise` auto completion
+which mise > /dev/null \
+  && mise completion zsh > "$HOME/.zfunc/_mise"
+
 # Enable `terraform` auto completion
 which terraform > /dev/null \
   && complete -o nospace -C '$(which terraform)' terraform
