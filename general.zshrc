@@ -63,6 +63,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
     [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
     [ ! "$PATH" = "*/usr/local/bin*" ] && export PATH="/usr/local/bin:$PATH"
 
+    if which kiro-cli > /dev/null; then
+      [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+    fi
+
     ### Homebrew {{{
       if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
         if [ ! "$HOMEBREW_LOADED" = "true" ]; then
@@ -103,6 +107,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
     if which kubectl > /dev/null; then
       export PATH="$PATH:$HOME/.krew/bin"
+    fi
+
+    if which antigravity > /dev/null; then
+      export PATH="$PATH:$HOME/.antigravity/antigravity/bin"
     fi
 
     export PATH_LOADED="true"
