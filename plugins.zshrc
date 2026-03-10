@@ -83,11 +83,8 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
 ### }}}
 
 ### Integration: FZF {{{
-  zinit ice lucid wait"0"
-  zinit snippet "$(brew --prefix)/opt/fzf/shell/completion.zsh"
-
-  zinit ice lucid wait"0" 
-  zinit snippet "$(brew --prefix)/opt/fzf/shell/key-bindings.zsh"
+  zinit ice lucid wait"0" atload'eval "$(fzf --zsh)"'
+  zinit light junegunn/fzf
 ### }}}
 
 ### Plugin: FZF Tab {{{
