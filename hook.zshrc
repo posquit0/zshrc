@@ -19,10 +19,10 @@ if (( $+commands[tfswitch] )); then
   load-tfswitch
 fi
 
-# Enable `direnv` hook
-(( $+commands[direnv] )) \
-  && eval "$(direnv hook zsh)"
-
-# Enable `mise` hook
-(( $+commands[mise] )) \
-  && eval "$(mise activate zsh)"
+# Enable the `mise` hook, falling back to `direnv` when mise is not
+# installed; mise covers direnv's use case so both hooks are not needed
+if (( $+commands[mise] )); then
+  eval "$(mise activate zsh)"
+elif (( $+commands[direnv] )); then
+  eval "$(direnv hook zsh)"
+fi
