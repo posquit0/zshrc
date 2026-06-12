@@ -19,11 +19,11 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   zinit light zdharma-continuum/fast-syntax-highlighting
 ### }}}
 
-### Plugin: Autosuggentions {{{
+### Plugin: Autosuggestions {{{
   # Fish-like autosuggestions for zsh
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=244"
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-  ZSH_AUTOSUGGEST_USE_ASYNC=true
+  # NOTE: async mode is the default since v0.7.0; no need to set it explicitly
 
   zinit ice wait"0b" lucid atload'
     _zsh_autosuggest_start
@@ -40,16 +40,22 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   zinit light zsh-users/zsh-completions
 ### }}}
 
-### Plugin: Alias Tips {{{
-  # Help remembering those aliases you defined once
-  zinit ice from'gh-r' as 'program'
-  zinit light decayofmind/zsh-fast-alias-tips
-  export ZSH_FAST_ALIAS_TIPS_PREFIX="💡 Alias: $(tput bold)"
+### Plugin: You Should Use {{{
+  # Reminds you of your existing aliases when you type the aliased command
+  # INFO: Replaces `decayofmind/zsh-fast-alias-tips` (unmaintained since 2025)
+  YSU_MESSAGE_POSITION="after"
+  YSU_MODE=ALL
+
+  zinit ice wait lucid
+  zinit light MichaelAquilina/zsh-you-should-use
 ### }}}
 
 ### Plugin: History Substring Search {{{
   # ZSH port of Fish history search
   # INFO: zsh-history-substring-search should be after zsh-syntax-highlighting
+  # Do not show the same result twice while cycling through matches
+  HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+
   zinit ice wait lucid atload'
     bindkey "^P" history-substring-search-up
     bindkey "^N" history-substring-search-down
@@ -74,14 +80,6 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   zinit light jeffreytse/zsh-vi-mode
 ### }}}
 
-### Plugin: GitHub Copilot {{{
-  ZSH_GH_COPILOT_NO_CHECK=1
-  # GitHub Copilot for your command line
-  zinit light loiccoyle/zsh-github-copilot
-  bindkey '»' zsh_gh_copilot_explain  # bind Option+shift+\ to explain
-  bindkey '«' zsh_gh_copilot_suggest  # bind Option+\ to suggest
-### }}}
-
 ### Integration: FZF {{{
   zinit ice lucid wait"0" atload'eval "$(fzf --zsh)"'
   zinit light junegunn/fzf
@@ -104,8 +102,11 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   zinit light Aloxaf/fzf-tab
 ### }}}
 
-### Plugin: Calc {{{
-  # Support for basic math
-  zinit ice wait"1" lucid
-  zinit light arzzen/calc.plugin.zsh
+### Calc {{{
+  # Support for basic math with zsh built-ins
+  # INFO: Replaces `arzzen/calc.plugin.zsh` (unmaintained since 2024)
+  # Interactive calculator: run `zcalc`
+  autoload -Uz zcalc
+  # Inline calculator (usage: `= 2 * (3 + 4)`)
+  function = { echo $(( $* )) }
 ### }}}
