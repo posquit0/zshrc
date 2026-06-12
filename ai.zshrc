@@ -3,10 +3,6 @@
 #
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # https://www.posquit0.com/
-#
-# LLM assistance on the command line via the `claude` CLI.
-# Replaces the defunct `zsh-github-copilot` plugin (its gh-copilot
-# backend was shut down by GitHub on 2025-10-25).
 
 (( $+commands[claude] )) || return 0
 
