@@ -15,7 +15,9 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   # Fish shell-like syntax highlighting for Zsh
   # INFO: Alternative of `zsh-syntax-highlighting`
 
-  zinit ice wait lucid atinit"zpcompinit; zpcdreplay"
+  # NOTE: compinit runs once in completion.zshrc (before turbo plugins fire),
+  # so no `zicompinit` is needed here anymore
+  zinit ice wait lucid
   zinit light zdharma-continuum/fast-syntax-highlighting
 ### }}}
 
