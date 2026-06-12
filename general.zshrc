@@ -98,28 +98,14 @@ export XDG_CONFIG_HOME="$HOME/.config"
     [ -d $HOME/bin ] && path=($HOME/bin $path)
     [ -d $HOME/.local/bin ] && path=($HOME/.local/bin $path)
     [ -d $HOME/scripts ] && path=($HOME/scripts $path)
-    [ -d $HOME/.rbenv/bin ] && path=($HOME/.rbenv/bin $path)
 
-    # Extend $PATH with mise shims so mise-managed tools are visible to
-    # non-interactive shells and to startup-time checks; `mise activate`
-    # swaps these for the real tool paths in interactive shells
+    # Extend $PATH with mise shims so mise-managed tools are visible to non-interactive shells and to startup-time checks; `mise activate` swaps these for the real tool paths in interactive shells
     [ -d ${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims ] \
       && path=(${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims $path)
 
-    if (( $+commands[rbenv] )); then
-      eval "$(rbenv init - zsh)"
-    fi
     # Extend $PATH with Ruby Gem's bin directory
     if (( $+commands[ruby] )) && (( $+commands[gem] )); then
       path=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin" $path)
-    fi
-
-    # Node.js
-    if (( $+commands[volta] )); then
-      export VOLTA_HOME=$HOME/.volta
-
-      # Extend $PATH with volta's bin directory
-      path=($VOLTA_HOME/bin $path)
     fi
 
     if (( $+commands[kubectl] )); then

@@ -9,15 +9,15 @@
 autoload -Uz add-zsh-hook
 
 # Enable `tfswitch` hook
-load-tfswitch() {
-  if [ -f ".terraform-version" ] || [ -f "versions.tf" ]; then
-    tfswitch
-  fi
-}
-if (( $+commands[tfswitch] )); then
-  add-zsh-hook chpwd load-tfswitch
-  load-tfswitch
-fi
+# load-tfswitch() {
+#   if [ -f ".terraform-version" ] || [ -f "versions.tf" ]; then
+#     tfswitch
+#   fi
+# }
+# if (( $+commands[tfswitch] )); then
+#   add-zsh-hook chpwd load-tfswitch
+#   load-tfswitch
+# fi
 
 # Enable the `mise` hook, falling back to `direnv` when mise is not
 # installed; mise covers direnv's use case so both hooks are not needed
