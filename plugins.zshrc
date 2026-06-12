@@ -25,7 +25,13 @@ zinit snippet OMZ::plugins/git/git.plugin.zsh
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   # NOTE: async mode is the default since v0.7.0; no need to set it explicitly
 
+  # The AI widgets (ai.zshrc) render their result through POSTDISPLAY; if
+  # autosuggestions wraps them, its post-widget hook rewrites POSTDISPLAY
+  # and wipes the result right away. This must be appended after the plugin
+  # loads (its defaults are skipped when the variable already exists), hence
+  # inside atload rather than in ai.zshrc.
   zinit ice wait"0b" lucid atload'
+    ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(zsh-ai-suggest zsh-ai-explain)
     _zsh_autosuggest_start
     bindkey "^f" forward-word
     bindkey "^e" autosuggest-execute
