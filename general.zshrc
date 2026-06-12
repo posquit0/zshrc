@@ -6,11 +6,13 @@
 
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
-else
-  export EDITOR="$( echo $(which nvim) || echo $(which vim) || echo $(which vi) )"
-fi
+for _editor in nvim vim vi; do
+  if (( $+commands[$_editor] )); then
+    export EDITOR=$_editor
+    break
+  fi
+done
+unset _editor
 
 # Need to use gpg-agent with pinentry in macOS
 export GPG_TTY=$(tty)
@@ -42,9 +44,9 @@ export XDG_CONFIG_HOME="$HOME/.config"
   # Tell it where to save the history
   export HISTFILE=$HOME/.zsh_history
   # The number of lines from $HISTFILE to read at the start of an interactive session
-  export HISTSIZE=10000
+  export HISTSIZE=100000
   # The number of lines of your history you want saved
-  export SAVEHIST=10000
+  export SAVEHIST=100000
 
   # Ensure that commands are added to the history immediately
   setopt inc_append_history
@@ -52,18 +54,27 @@ export XDG_CONFIG_HOME="$HOME/.config"
   setopt extended_history
   # Skip duplicates while searching
   setopt hist_find_no_dups
+  # Remove older duplicates when a command is re-entered
+  setopt hist_ignore_all_dups
+  # Do not write duplicates to the history file
+  setopt hist_save_no_dups
+  # Remove superfluous blanks before recording
+  setopt hist_reduce_blanks
+  # Do not record commands starting with a space
+  setopt hist_ignore_space
 ### }}}
 
 
 ### Path {{{
-  if [ ! "$PATH_LOADED" = "true" ]; then
-    # Extend $PATH with Homebrew's sbin directory
-    [ ! "$PATH" = "*/usr/sbin*" ] && export PATH="/usr/sbin:$PATH"
-    [ ! "$PATH" = "*/usr/bin*" ] && export PATH="/usr/bin:$PATH"
-    [ ! "$PATH" = "*/usr/local/sbin*" ] && export PATH="/usr/local/sbin:$PATH"
-    [ ! "$PATH" = "*/usr/local/bin*" ] && export PATH="/usr/local/bin:$PATH"
+  # Keep entries in $path (and the tied $PATH) unique; the first occurrence wins
+  typeset -U path PATH
+  export PATH
 
-    if which kiro-cli > /dev/null; then
+  if [ ! "$PATH_LOADED" = "true" ]; then
+    # Extend $PATH with the system binary directories
+    path=(/usr/local/bin /usr/local/sbin /usr/bin /usr/sbin $path)
+
+    if (( $+commands[kiro-cli] )); then
       [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
     fi
 
@@ -83,41 +94,47 @@ export XDG_CONFIG_HOME="$HOME/.config"
     ### }}}
 
     # Extend $PATH with user's binary paths in home directory
-    [ -d $HOME/.bin ] && export PATH="$HOME/.bin:$PATH"
-    [ -d $HOME/bin ] && export PATH="$HOME/bin:$PATH"
-    [ -d $HOME/.local/bin ] && export PATH="$HOME/.local/bin:$PATH"
-    [ -d $HOME/scripts ] && export PATH="$HOME/scripts:$PATH"
-    [ -d $HOME/.rbenv/bin ] && export PATH="$HOME/.rbenv/bin:$PATH"
+    [ -d $HOME/.bin ] && path=($HOME/.bin $path)
+    [ -d $HOME/bin ] && path=($HOME/bin $path)
+    [ -d $HOME/.local/bin ] && path=($HOME/.local/bin $path)
+    [ -d $HOME/scripts ] && path=($HOME/scripts $path)
+    [ -d $HOME/.rbenv/bin ] && path=($HOME/.rbenv/bin $path)
 
-    if which rbenv > /dev/null; then
+    # Extend $PATH with mise shims so mise-managed tools are visible to
+    # non-interactive shells and to startup-time checks; `mise activate`
+    # swaps these for the real tool paths in interactive shells
+    [ -d ${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims ] \
+      && path=(${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims $path)
+
+    if (( $+commands[rbenv] )); then
       eval "$(rbenv init - zsh)"
     fi
     # Extend $PATH with Ruby Gem's bin directory
-    if which ruby > /dev/null && which gem > /dev/null; then
-      PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
+    if (( $+commands[ruby] )) && (( $+commands[gem] )); then
+      path=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin" $path)
     fi
 
     # Node.js
-    if which volta > /dev/null; then
+    if (( $+commands[volta] )); then
       export VOLTA_HOME=$HOME/.volta
 
       # Extend $PATH with volta's bin directory
-      export PATH="$VOLTA_HOME/bin:$PATH"
+      path=($VOLTA_HOME/bin $path)
     fi
 
-    if which kubectl > /dev/null; then
-      export PATH="$PATH:$HOME/.krew/bin"
+    if (( $+commands[kubectl] )); then
+      path+=($HOME/.krew/bin)
     fi
 
-    if which antigravity > /dev/null; then
-      export PATH="$PATH:$HOME/.antigravity/antigravity/bin"
+    if (( $+commands[antigravity] )); then
+      path+=($HOME/.antigravity/antigravity/bin)
     fi
 
     export PATH_LOADED="true"
   fi
 
   # Go PATH
-  if which go > /dev/null; then
+  if (( $+commands[go] )); then
     export GOPATH=$HOME/go
   fi
 ### }}}
@@ -140,8 +157,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   # Enable comments in interactive shell
   setopt interactive_comments
 
-  if which aws-vault > /dev/null; then
-    if which gopass > /dev/null; then
+  if (( $+commands[aws-vault] )); then
+    if (( $+commands[gopass] )); then
       export AWS_VAULT_BACKEND=pass
       export AWS_VAULT_PROMPT=osascript
       export AWS_VAULT_PASS_CMD=gopass
@@ -150,11 +167,11 @@ export XDG_CONFIG_HOME="$HOME/.config"
     fi
   fi
 
-  if which nvim > /dev/null; then
+  if (( $+commands[nvim] )); then
     export KUBE_EDITOR=nvim
   fi
 
-  if which zoxide > /dev/null; then
+  if (( $+commands[zoxide] )); then
     eval "$(zoxide init zsh)"
   fi
 ### }}}
