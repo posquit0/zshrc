@@ -8,8 +8,6 @@
 # Set the path of zsh configuration directory
 export ZSH_HOME=$HOME/.zsh
 
-autoload -Uz compinit && compinit
-
 # Load a general configuration of zsh
 [ -f $ZSH_HOME/general.zshrc ] && source $ZSH_HOME/general.zshrc
 

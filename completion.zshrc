@@ -4,63 +4,100 @@
 # Maintained by Byungjin Park <posquit0.bj@gmail.com>
 # https://www.posquit0.com/
 
-autoload bashcompinit && bashcompinit
 
-if which brew > /dev/null; then
-  fpath+=$(brew --prefix)/share/zsh/site-functions
-fi
+### Completion System {{{
+  # Register extra completion directories BEFORE compinit so they are picked up
+  if (( $+commands[brew] )); then
+    fpath+=("$(brew --prefix)/share/zsh/site-functions")
+  fi
 
-mkdir -p "$HOME/.zfunc"
-fpath+="$HOME/.zfunc"
+  mkdir -p "$HOME/.zfunc"
+  fpath+=("$HOME/.zfunc")
+
+  # Initialize the completion system.
+  # compinit scans every directory in $fpath and writes the result to a cache
+  # file (~/.zcompdump). The scan is the slow part, so run it at most once a
+  # day; otherwise reuse the cache as-is with -C, which skips the scan.
+  #
+  # The condition is a zsh glob, not a regex. It reads as: "does a plain
+  # file (.) named .zcompdump, modified more than 24 hours ago (mh+24),
+  # exist (N: expand to nothing instead of erroring when it does not)?"
+  autoload -Uz compinit
+  if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+  else
+    compinit -C
+  fi
+
+  # Replay `compdef` calls that zinit queued for plugins loaded before compinit
+  (( $+functions[zinit] )) && zinit cdreplay -q
+
+  # Enable bash-style `complete` for tools that only ship bash completions
+  autoload -Uz bashcompinit && bashcompinit
+### }}}
+
+
+### Helpers {{{
+  # Usage: _completion_cache <command> <args...>
+  # Saves the output of `<command> <args...>` as the completion file
+  # ~/.zfunc/_<command>, but only when that file is missing or older than
+  # the command's binary (i.e. the tool was upgraded since the last run).
+  # This replaces regenerating every completion file on every shell startup.
+  function _completion_cache() {
+    local cmd=$1 target="$HOME/.zfunc/_$1"
+    shift
+    (( $+commands[$cmd] )) || return 0
+    if [[ ! -f $target || $target -ot ${commands[$cmd]} ]]; then
+      "$cmd" "$@" > "$target"
+    fi
+  }
+### }}}
+
 
 # Enable `mise` auto completion
-which mise > /dev/null \
-  && mise completion zsh > "$HOME/.zfunc/_mise"
+_completion_cache mise completion zsh
 
 # Enable `terraform` auto completion
-which terraform > /dev/null \
-  && complete -o nospace -C '$(which terraform)' terraform
+(( $+commands[terraform] )) \
+  && complete -o nospace -C "${commands[terraform]}" terraform
 
 # Enable `volta` auto completion
-which volta > /dev/null \
-  && volta completions zsh > "$HOME/.zfunc/_volta"
+_completion_cache volta completions zsh
 
 # Enable `packer` auto completion
-which packer > /dev/null \
-  && complete -o nospace -C '$(which packer)' packer
+(( $+commands[packer] )) \
+  && complete -o nospace -C "${commands[packer]}" packer
 
 # Enable `skaffold` auto completion
-which skaffold > /dev/null \
+(( $+commands[skaffold] )) \
   && eval "$(skaffold completion zsh)"
 
 # Enable `kaf` auto completion
-which kaf > /dev/null \
-  && kaf completion zsh > "$HOME/.zfunc/_kaf"
+_completion_cache kaf completion zsh
 
 # Enable `kubebuilder` auto completion
-which kubebuilder > /dev/null \
+(( $+commands[kubebuilder] )) \
   && eval "$(kubebuilder completion zsh)"
 
-if which switcher > /dev/null; then
+if (( $+commands[switcher] )); then
   source <(switcher init zsh)
-  source <(compdef _switcher switch)
+  compdef _switcher switch
   source <(switch completion zsh)
 fi
 
 # Enable `aws` auto completion
-which aws > /dev/null \
-  && complete -C '$(which aws_completer)' aws
+(( $+commands[aws] && $+commands[aws_completer] )) \
+  && complete -C "${commands[aws_completer]}" aws
 
 # Enable `aws-vault` auto completion
-which aws-vault > /dev/null \
+(( $+commands[aws-vault] )) \
   && eval "$(aws-vault --completion-script-zsh)"
 
 # Enable `poetry` auto completion
-which poetry > /dev/null \
-  && poetry completions zsh > "$HOME/.zfunc/_poetry"
+_completion_cache poetry completions zsh
 
 # Enable `pipenv` auto completion
-which pipenv > /dev/null \
+(( $+commands[pipenv] )) \
   && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 # Creating the virtualenv inside project’s directory
 export PIPENV_VENV_IN_PROJECT=1
