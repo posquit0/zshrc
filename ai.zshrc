@@ -21,6 +21,12 @@ _zsh_ai_request() {
   tmp=$(mktemp) || return 1
   typeset -g _ZSH_AI_RESPONSE=
 
+  # The status message must stay on one physical line: when it wraps, zle's
+  # message area grows and every redraw leaves the previous frame on screen
+  # as a ghost line. Strip newlines from the label here; width-based
+  # truncation happens per frame below.
+  label=${label//$'\n'/ }
+
   claude -p --model "$ZSH_AI_MODEL" "$prompt" > "$tmp" 2>/dev/null &!
   pid=$!
 
@@ -29,8 +35,14 @@ _zsh_ai_request() {
 
   local -a frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
   local i=1 start=$SECONDS
+  local msg suffix max
   while kill -0 $pid 2>/dev/null; do
-    zle -M "${frames[i]} ${label} [${ZSH_AI_MODEL}, $(( SECONDS - start ))s, Ctrl+C to cancel]"
+    suffix=" [${ZSH_AI_MODEL}, $(( SECONDS - start ))s, Ctrl+C to cancel]"
+    msg="${frames[i]} ${label}"
+    # -3 leaves room for the ellipsis and double-width characters (emoji)
+    max=$(( COLUMNS - $#suffix - 3 ))
+    (( max > 1 && $#msg > max )) && msg="${msg[1,max]}…"
+    zle -M "${msg}${suffix}"
     (( i = i % $#frames + 1 ))
     if [[ -n $_ZSH_AI_HAS_ZSELECT ]]; then
       zselect -t 10  # centiseconds
@@ -53,6 +65,7 @@ zsh-ai-suggest() {
     "🤖 Suggesting a command for: $BUFFER"; then
     BUFFER=$_ZSH_AI_RESPONSE
     CURSOR=$#BUFFER
+    zle -M ""  # clear the last spinner frame
     zle reset-prompt
   elif (( $? != 130 )); then
     zle -M "claude returned no suggestion; check \`claude /login\` or quota"
