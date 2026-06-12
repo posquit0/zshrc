@@ -8,9 +8,6 @@
 # Set the path of zsh configuration directory
 export ZSH_HOME=$HOME/.zsh
 
-# NOTE: compinit is invoked once in completion.zshrc, after all fpath entries
-# are registered; running it here as well doubles the startup cost.
-
 # Load a general configuration of zsh
 [ -f $ZSH_HOME/general.zshrc ] && source $ZSH_HOME/general.zshrc
 
