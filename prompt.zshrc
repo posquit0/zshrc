@@ -5,5 +5,5 @@
 # https://www.posquit0.com/
 
 
-which starship > /dev/null \
+(( $+commands[starship] )) \
   && eval "$(starship init zsh)"
