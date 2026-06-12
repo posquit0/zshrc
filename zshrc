@@ -31,6 +31,9 @@ autoload -Uz compinit && compinit
 # Load an alias configuration of zsh
 [ -f $ZSH_HOME/aliases.zshrc ] && source $ZSH_HOME/aliases.zshrc
 
+# Load an AI assistance configuration of zsh
+[ -f $ZSH_HOME/ai.zshrc ] && source $ZSH_HOME/ai.zshrc
+
 # Load a general alias configuration
 [ -f $HOME/.alias ] && source $HOME/.alias
 
