@@ -43,7 +43,9 @@ alias ssh="ssh -A"
 (( $+commands[kubectl] )) \
   && alias k=kubectl
 
-(( $+commands[switch] )) \
+# `switch` is a shell function defined by `switcher init zsh`, not a binary,
+# so the function table must be checked as well
+(( $+commands[switch] || $+functions[switch] )) \
   && alias ks=switch
 
 (( $+commands[eza] )) \
