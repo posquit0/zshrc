@@ -5,17 +5,24 @@
 # https://www.posquit0.com/
 
 
+# `add-zsh-hook` is not loaded by default; do not rely on plugins to do it
+autoload -Uz add-zsh-hook
+
+# Enable `tfswitch` hook
 load-tfswitch() {
-  [ -f ".terraform-version" ] && tfswitch
-  [ -f "versions.tf" ] && tfswitch
+  if [ -f ".terraform-version" ] || [ -f "versions.tf" ]; then
+    tfswitch
+  fi
 }
-which tfswitch > /dev/null \
-  && add-zsh-hook chpwd load-tfswitch
+if (( $+commands[tfswitch] )); then
+  add-zsh-hook chpwd load-tfswitch
+  load-tfswitch
+fi
 
 # Enable `direnv` hook
-which direnv > /dev/null \
+(( $+commands[direnv] )) \
   && eval "$(direnv hook zsh)"
 
 # Enable `mise` hook
-which mise > /dev/null \
+(( $+commands[mise] )) \
   && eval "$(mise activate zsh)"

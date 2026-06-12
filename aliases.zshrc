@@ -28,47 +28,47 @@ alias ssh="ssh -A"
 [ -f /opt/homebrew/bin/brew ] \
   && alias abrew=/opt/homebrew/bin/brew
 
-which chezmoi > /dev/null \
+(( $+commands[chezmoi] )) \
   && alias cz=chezmoi
 
-which zellij > /dev/null \
+(( $+commands[zellij] )) \
   && alias zj=zellij
 
-which htop > /dev/null \
+(( $+commands[htop] )) \
   && alias top=htop
 
-which docker > /dev/null \
+(( $+commands[docker] )) \
   && alias d=docker
 
-which kubectl > /dev/null \
+(( $+commands[kubectl] )) \
   && alias k=kubectl
 
-which switch > /dev/null \
+(( $+commands[switch] )) \
   && alias ks=switch
 
-which eza > /dev/null \
+(( $+commands[eza] )) \
   && alias ls=eza
 
-which lazygit > /dev/null \
+(( $+commands[lazygit] )) \
   && alias g=lazygit
 
-which nvim > /dev/null \
+(( $+commands[nvim] )) \
   && alias vim=nvim
 
-which terraform > /dev/null \
+(( $+commands[terraform] )) \
   && alias tf=terraform
 
-which packer > /dev/null \
+(( $+commands[packer] )) \
   && alias pkr=packer
 
-which pinentry-mac > /dev/null \
+(( $+commands[pinentry-mac] )) \
   && alias pinentry=pinentry-mac
 
-which gopass > /dev/null \
+(( $+commands[gopass] )) \
   && alias pass=gopass
 
-which claude-squad > /dev/null \
+(( $+commands[claude-squad] )) \
   && alias cs=claude-squad
 
-which grealpath > /dev/null \
+(( $+commands[grealpath] )) \
   && alias realpath=grealpath
