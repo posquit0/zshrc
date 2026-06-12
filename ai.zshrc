@@ -10,6 +10,8 @@
 : ${ZSH_AI_MODEL:=haiku}
 # Highlight style of the loading status (defaults to a comment-like gray)
 : ${ZSH_AI_STATUS_STYLE:=fg=244}
+# Highlight style of the explanation result (defaults to bright cyan, bold)
+: ${ZSH_AI_RESULT_STYLE:=fg=14,bold}
 # Spinner refresh interval in milliseconds
 : ${ZSH_AI_SPINNER_INTERVAL:=200}
 
@@ -125,7 +127,12 @@ zsh-ai-explain() {
   if _zsh_ai_request \
     "Explain what this zsh command does, briefly and in plain text (no markdown): $cmd" \
     "🤖 Explaining: $cmd"; then
-    zle -M "$_ZSH_AI_RESPONSE"
+    # Render the explanation below the buffer through POSTDISPLAY so it can
+    # be styled with region_highlight (zle -M cannot be colored); it stays
+    # visible until the next keystroke repaints the editor
+    POSTDISPLAY=$'\n'"$_ZSH_AI_RESPONSE"
+    region_highlight+=("$#BUFFER $(( $#BUFFER + $#POSTDISPLAY )) ${ZSH_AI_RESULT_STYLE}")
+    zle -R
   elif (( $? != 130 )); then
     zle -M "claude returned no explanation; check \`claude /login\` or quota"
   fi
