@@ -15,8 +15,13 @@
   fpath+=("$HOME/.zfunc")
 
   # Initialize the completion system.
-  # Perform the full (secure) initialization only when the dump file is older
-  # than 24 hours; otherwise reuse the cached dump (-C) for a faster startup.
+  # compinit scans every directory in $fpath and writes the result to a cache
+  # file (~/.zcompdump). The scan is the slow part, so run it at most once a
+  # day; otherwise reuse the cache as-is with -C, which skips the scan.
+  #
+  # The condition is a zsh glob, not a regex. It reads as: "does a plain
+  # file (.) named .zcompdump, modified more than 24 hours ago (mh+24),
+  # exist (N: expand to nothing instead of erroring when it does not)?"
   autoload -Uz compinit
   if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
     compinit
@@ -33,8 +38,11 @@
 
 
 ### Helpers {{{
-  # Generate a completion file only when it is missing or older than the tool
-  # binary, instead of regenerating it on every shell startup
+  # Usage: _completion_cache <command> <args...>
+  # Saves the output of `<command> <args...>` as the completion file
+  # ~/.zfunc/_<command>, but only when that file is missing or older than
+  # the command's binary (i.e. the tool was upgraded since the last run).
+  # This replaces regenerating every completion file on every shell startup.
   function _completion_cache() {
     local cmd=$1 target="$HOME/.zfunc/_$1"
     shift
@@ -93,5 +101,3 @@ _completion_cache poetry completions zsh
   && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
 # Creating the virtualenv inside project’s directory
 export PIPENV_VENV_IN_PROJECT=1
-
-unfunction _completion_cache
