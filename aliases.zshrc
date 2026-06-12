@@ -23,7 +23,7 @@ alias python=python3
 alias ssh="ssh -A"
 
 [ -f /usr/local/bin/brew ] \
-  && alias ibrew=/usr/local/bin/brew
+  && alias ibrew="arch -x86_64 /usr/local/bin/brew"
 
 [ -f /opt/homebrew/bin/brew ] \
   && alias abrew=/opt/homebrew/bin/brew
