@@ -14,6 +14,11 @@
   mkdir -p "$HOME/.zfunc"
   fpath+=("$HOME/.zfunc")
 
+  # Docker Desktop ships its CLI completions here; just register the
+  # directory and let the single compinit below pick them up
+  [ -d "$HOME/.docker/completions" ] \
+    && fpath+=("$HOME/.docker/completions")
+
   # Initialize the completion system.
   # compinit scans every directory in $fpath and writes the result to a cache
   # file (~/.zcompdump). The scan is the slow part, so run it at most once a
