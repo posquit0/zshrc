@@ -70,6 +70,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   typeset -U path PATH
   export PATH
 
+  # One-time, expensive PATH setup (subshell forks, `eval`). Guarded with PATH_LOADED so it runs once per login chain
+  # child shells inherit the results (including $GEM_USER_BIN) through the environment.
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with the system binary directories
     path=(/usr/local/bin /usr/local/sbin /usr/bin /usr/sbin $path)
@@ -80,33 +82,12 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
     ### Homebrew {{{
       if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
-        if [ ! "$HOMEBREW_LOADED" = "true" ]; then
-          eval $(/opt/homebrew/bin/brew shellenv)
-          export HOMEBREW_LOADED="true"
-        fi
+        eval $(/opt/homebrew/bin/brew shellenv)
       fi
       if [[ $OSTYPE == darwin* && $CPUTYPE == i386 ]]; then
-        if [ ! "$HOMEBREW_LOADED" = "true" ]; then
-          eval $(/usr/local/bin/brew shellenv)
-          export HOMEBREW_LOADED="true"
-        fi
+        eval $(/usr/local/bin/brew shellenv)
       fi
     ### }}}
-
-    # Extend $PATH with user's binary paths in home directory
-    [ -d $HOME/.bin ] && path=($HOME/.bin $path)
-    [ -d $HOME/bin ] && path=($HOME/bin $path)
-    [ -d $HOME/.local/bin ] && path=($HOME/.local/bin $path)
-    [ -d $HOME/scripts ] && path=($HOME/scripts $path)
-
-    # Extend $PATH with mise shims so mise-managed tools are visible to non-interactive shells and to startup-time checks; `mise activate` swaps these for the real tool paths in interactive shells
-    [ -d ${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims ] \
-      && path=(${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims $path)
-
-    # Extend $PATH with Ruby Gem's bin directory
-    if (( $+commands[ruby] )) && (( $+commands[gem] )); then
-      path=("$(ruby -r rubygems -e 'puts Gem.user_dir')/bin" $path)
-    fi
 
     if (( $+commands[kubectl] )); then
       path+=($HOME/.krew/bin)
@@ -116,8 +97,32 @@ export XDG_CONFIG_HOME="$HOME/.config"
       path+=($HOME/.antigravity/antigravity/bin)
     fi
 
+    # Resolving the Ruby Gem user dir forks `ruby`; cache it so child shells can re-prepend it below without paying the cost again.
+    if (( $+commands[ruby] )) && (( $+commands[gem] )); then
+      export GEM_USER_BIN="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    fi
+
     export PATH_LOADED="true"
   fi
+
+  # Extend $PATH with user's binary paths in home directory.
+  # Re-assert high-priority entries on EVERY shell, not just the first one.
+  # macOS runs `/usr/libexec/path_helper` from /etc/zprofile on every login
+  # shell, which rebuilds an inherited $PATH by hoisting /etc/paths and
+  # /etc/paths.d/* (e.g. /etc/paths.d/homebrew -> /opt/homebrew/bin) to the
+  # front, pushing entries like ~/.local/bin behind Homebrew. Prepending these
+  # again here restores their priority; `typeset -U path` keeps it idempotent
+  # (an existing entry is just moved to the front, $PATH never grows).
+  [ -d $HOME/.bin ] && path=($HOME/.bin $path)
+  [ -d $HOME/bin ] && path=($HOME/bin $path)
+  [ -d $HOME/.local/bin ] && path=($HOME/.local/bin $path)
+  [ -d $HOME/scripts ] && path=($HOME/scripts $path)
+
+  # Extend $PATH with mise shims so mise-managed tools are visible to non-interactive shells and to startup-time checks; `mise activate` swaps these for the real tool paths in interactive shells
+  [ -d ${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims ] \
+    && path=(${XDG_DATA_HOME:-$HOME/.local/share}/mise/shims $path)
+
+  [ -n "$GEM_USER_BIN" ] && path=($GEM_USER_BIN $path)
 
   # Go PATH
   if (( $+commands[go] )); then
