@@ -144,6 +144,8 @@ zle -N zsh-ai-explain
 _zsh_ai_bind_keys() {
   bindkey '«' zsh-ai-suggest  # Option+\ on macOS
   bindkey '»' zsh-ai-explain  # Option+Shift+\ on macOS
+  bindkey '^[\\' zsh-ai-suggest  # Alt+\
+  bindkey '^[|' zsh-ai-explain   # Alt+Shift+\
 }
 
 if (( $+functions[zvm_init] )); then
