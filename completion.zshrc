@@ -53,7 +53,9 @@
     shift
     (( $+commands[$cmd] )) || return 0
     if [[ ! -f $target || $target -ot ${commands[$cmd]} ]]; then
-      "$cmd" "$@" > "$target"
+      # Drop the file on failure so a broken run doesn't cache an empty
+      # completion (e.g. a mise shim whose tool is not yet activated)
+      "$cmd" "$@" > "$target" 2>/dev/null || rm -f "$target"
     fi
   }
 ### }}}
