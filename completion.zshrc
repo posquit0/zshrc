@@ -97,12 +97,3 @@ fi
 # Enable `aws-vault` auto completion
 (( $+commands[aws-vault] )) \
   && eval "$(aws-vault --completion-script-zsh)"
-
-# Enable `poetry` auto completion
-_completion_cache poetry completions zsh
-
-# Enable `pipenv` auto completion
-(( $+commands[pipenv] )) \
-  && eval "$(_PIPENV_COMPLETE=zsh_source pipenv)"
-# Creating the virtualenv inside project’s directory
-export PIPENV_VENV_IN_PROJECT=1
