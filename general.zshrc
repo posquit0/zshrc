@@ -16,6 +16,11 @@ unset _editor
 
 # Need to use gpg-agent with pinentry in macOS
 export GPG_TTY=$(tty)
+# Use TUI pinentry (via pinentry-executor) in remote SSH sessions
+if [[ -n "$SSH_CONNECTION" || -n "$SSH_TTY" ]]; then
+  export PINENTRY_USER_DATA="MODE=curses"
+fi
+
 # Use ~/.config directory
 export XDG_CONFIG_HOME="$HOME/.config"
 
