@@ -132,6 +132,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   # Go PATH
   if (( $+commands[go] )); then
     export GOPATH=$HOME/go
+    # `go install` drops binaries in $GOPATH/bin (unless $GOBIN overrides it)
+    [ -d ${GOBIN:-$GOPATH/bin} ] && path+=(${GOBIN:-$GOPATH/bin})
   fi
 ### }}}
 
