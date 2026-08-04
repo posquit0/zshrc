@@ -12,17 +12,22 @@
 typeset -gA _ZSH_AI_PROVIDER_BIN=(
   claude-code claude
   kiro-cli    kiro-cli
+  codex       codex
 )
 # Model used when neither ZSH_AI_<PROVIDER>_MODEL nor ZSH_AI_MODEL is set.
-# An empty value means "let the provider pick" (kiro-cli only exposes `auto`).
+# An empty value means "let the provider pick": kiro-cli only exposes `auto`,
+# and codex takes its default from ~/.codex/config.toml (a ChatGPT account
+# rejects most explicit model names anyway).
 typeset -gA _ZSH_AI_PROVIDER_MODEL=(
   claude-code haiku
   kiro-cli    ''
+  codex       ''
 )
 # Hint shown when a provider returns nothing, usually an auth or quota issue
 typeset -gA _ZSH_AI_PROVIDER_HINT=(
   claude-code 'check `claude /login` or quota'
   kiro-cli    'check `kiro-cli login` or quota'
+  codex       'check `codex login` or quota'
 )
 
 # Bail out only if none of the backends is installed; the active one is
@@ -35,7 +40,7 @@ typeset -gA _ZSH_AI_PROVIDER_HINT=(
   return 1
 } || return 0
 
-# Backend used by the inline helpers: claude-code or kiro-cli
+# Backend used by the inline helpers: claude-code, kiro-cli or codex
 : ${ZSH_AI_PROVIDER:=claude-code}
 # Model override applied to every provider; empty means the provider default
 : ${ZSH_AI_MODEL:=}
@@ -108,6 +113,14 @@ _zsh_ai_resolve_provider() {
       # denies every tool so an inline helper can never touch the machine
       _ZSH_AI_ARGV=($bin chat --no-interactive --wrap never --trust-tools=)
       ;;
+    codex)
+      # `codex exec` writes only the final message to stdout (the session log
+      # goes to stderr). --ephemeral skips persisting a session for a one-off
+      # question, --skip-git-repo-check allows running outside a repository,
+      # and the read-only sandbox keeps the agent from changing anything
+      _ZSH_AI_ARGV=($bin exec --color never --ephemeral
+        --skip-git-repo-check --sandbox read-only)
+      ;;
   esac
   [[ -n $model ]] && _ZSH_AI_ARGV+=(--model "$model")
   _ZSH_AI_ARGV+=("${opts[@]}")
@@ -174,7 +187,9 @@ _zsh_ai_request() {
   # Keep the status to one line: strip newlines here, truncate per frame
   label=${label//$'\n'/ }
 
-  "${_ZSH_AI_ARGV[@]}" "$prompt" > "$tmp" 2>/dev/null &!
+  # </dev/null so a provider that appends piped stdin to the prompt (codex)
+  # neither blocks nor competes with zle for the terminal
+  "${_ZSH_AI_ARGV[@]}" "$prompt" </dev/null > "$tmp" 2>/dev/null &!
   pid=$!
 
   # On Ctrl+C, kill the request and let the loop exit on its own; the
