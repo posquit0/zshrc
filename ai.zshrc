@@ -40,19 +40,71 @@ typeset -gA _ZSH_AI_PROVIDER_HINT=(
   return 1
 } || return 0
 
-# Backend used by the inline helpers: claude-code, kiro-cli or codex
-: ${ZSH_AI_PROVIDER:=claude-code}
+# Backend used by the inline helpers: claude-code, kiro-cli or codex. Exported
+# so tools launched from the shell (e.g. the lazygit AI commit message command)
+# follow the same choice.
+typeset -gx ZSH_AI_PROVIDER=${ZSH_AI_PROVIDER:-claude-code}
 # Model override applied to every provider; empty means the provider default
-: ${ZSH_AI_MODEL:=}
+typeset -gx ZSH_AI_MODEL=${ZSH_AI_MODEL:-}
 # Highlight style of the loading status (defaults to a comment-like gray)
 : ${ZSH_AI_STATUS_STYLE:=fg=244}
+# Sweep the Instagram gradient across the loading status; 0 keeps it plain
+: ${ZSH_AI_STATUS_GRADIENT:=1}
 # Highlight style of the explanation result (defaults to bright cyan, bold)
 : ${ZSH_AI_RESULT_STYLE:=fg=14,bold}
 # Spinner refresh interval in milliseconds
-: ${ZSH_AI_SPINNER_INTERVAL:=200}
+: ${ZSH_AI_SPINNER_INTERVAL:=70}
 
 # zselect sleeps without forking; fall back to `sleep` when unavailable
 zmodload zsh/zselect 2>/dev/null && typeset -g _ZSH_AI_HAS_ZSELECT=1
+
+# Instagram's brand gradient as 24-bit stops: violet-blue through purple and
+# magenta into red, orange and yellow
+typeset -ga _ZSH_AI_GRAD_STOPS=(
+  '64;93;230'    # #405DE6
+  '88;81;219'    # #5851DB
+  '131;58;180'   # #833AB4
+  '193;53;132'   # #C13584
+  '225;48;108'   # #E1306C
+  '253;29;29'    # #FD1D1D
+  '245;96;64'    # #F56040
+  '247;119;55'   # #F77737
+  '252;175;69'   # #FCAF45
+  '255;220;128'  # #FFDC80
+)
+
+# Interpolate the stops into $1 `fg=` colours in $_ZSH_AI_RAMP, so the gradient
+# runs smoothly across the characters of the status line instead of banding.
+# Terminals without 24-bit colour get the nearest entry of the xterm cube.
+_zsh_ai_ramp() {
+  emulate -L zsh
+  local -i n=$1 i seg frac steps r g b
+  local -i count=$#_ZSH_AI_GRAD_STOPS
+  local -a from to
+  typeset -ga _ZSH_AI_RAMP=()
+  [[ -n $NO_COLOR || $ZSH_AI_STATUS_GRADIENT == 0 ]] && return 0
+  local truecolor=
+  [[ $COLORTERM == (truecolor|24bit) || $TERM == *-direct* ]] && truecolor=1
+  steps=$(( count - 1 ))
+  for (( i = 0; i < n; i++ )); do
+    # Position along the whole ramp, in thousandths of a segment
+    (( frac = i * steps * 1000 / (n > 1 ? n - 1 : 1) ))
+    (( seg = frac / 1000 + 1 ))
+    (( seg > steps )) && (( seg = steps ))
+    (( frac = frac - (seg - 1) * 1000 ))
+    from=(${(s.;.)_ZSH_AI_GRAD_STOPS[seg]})
+    to=(${(s.;.)_ZSH_AI_GRAD_STOPS[seg + 1]})
+    (( r = from[1] + (to[1] - from[1]) * frac / 1000 ))
+    (( g = from[2] + (to[2] - from[2]) * frac / 1000 ))
+    (( b = from[3] + (to[3] - from[3]) * frac / 1000 ))
+    if [[ -n $truecolor ]]; then
+      _ZSH_AI_RAMP+=("fg=#${(l:2::0:)$(([##16] r))}${(l:2::0:)$(([##16] g))}${(l:2::0:)$(([##16] b))}")
+    else
+      _ZSH_AI_RAMP+=("fg=$(( 16 + 36 * (r * 5 / 255) + 6 * (g * 5 / 255) + b * 5 / 255 ))")
+    fi
+  done
+}
+_zsh_ai_ramp 48
 
 # Expand a leading alias in the given command line, so the LLM sees the
 # real command (e.g. `k get pods` -> `kubectl get pods`). Only the first
@@ -112,6 +164,15 @@ _zsh_ai_resolve_provider() {
       # --wrap never keeps the reply unwrapped for parsing, and --trust-tools=
       # denies every tool so an inline helper can never touch the machine
       _ZSH_AI_ARGV=($bin chat --no-interactive --wrap never --trust-tools=)
+      # Inside a work tree kiro-cli snapshots the repository for its checkpoint
+      # feature and tags the snapshot. With tag.gpgsign set that tag gets
+      # signed, so git blocks on pinentry (and on an editor for the tag
+      # message) and the request never finishes in a background job. The
+      # snapshot is throwaway, so sign nothing.
+      _ZSH_AI_ARGV=(env GIT_CONFIG_COUNT=2
+        GIT_CONFIG_KEY_0=tag.gpgsign GIT_CONFIG_VALUE_0=false
+        GIT_CONFIG_KEY_1=commit.gpgsign GIT_CONFIG_VALUE_1=false
+        "${_ZSH_AI_ARGV[@]}")
       ;;
     codex)
       # `codex exec` writes only the final message to stdout (the session log
@@ -201,20 +262,33 @@ _zsh_ai_request() {
   local -a saved_highlight=("${region_highlight[@]}")
 
   local -a frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
-  local i=1 start=$SECONDS
-  local msg suffix max
+  local -i tick=0 start=$SECONDS max k idx base
+  local msg suffix
   while kill -0 $pid 2>/dev/null; do
     suffix=" [${_ZSH_AI_LABEL}, $(( SECONDS - start ))s, Ctrl+C to cancel]"
-    msg="${frames[i]} ${label}"
+    msg="${frames[tick % $#frames + 1]} ${label}"
     # -3 leaves room for the ellipsis and double-width characters (emoji)
     max=$(( COLUMNS - $#suffix - 3 ))
     (( max > 1 && $#msg > max )) && msg="${msg[1,max]}…"
     POSTDISPLAY=$'\n'"${msg}${suffix}"
     # region_highlight offsets cover BUFFER followed by POSTDISPLAY
-    region_highlight=("${saved_highlight[@]}"
-      "$#BUFFER $(( $#BUFFER + $#POSTDISPLAY )) ${ZSH_AI_STATUS_STYLE}")
+    region_highlight=("${saved_highlight[@]}")
+    if (( $#_ZSH_AI_RAMP )); then
+      # One entry per character of the message, shifted by two ramp steps per
+      # frame, so the gradient travels along the text; the suffix stays plain
+      base=$(( $#BUFFER + 1 ))  # +1 for the newline that opens POSTDISPLAY
+      for (( k = 0; k < $#msg; k++ )); do
+        (( idx = (k + tick * 2) % $#_ZSH_AI_RAMP + 1 ))
+        region_highlight+=("$(( base + k )) $(( base + k + 1 )) ${_ZSH_AI_RAMP[idx]}")
+      done
+      region_highlight+=(
+        "$(( base + $#msg )) $(( $#BUFFER + $#POSTDISPLAY )) ${ZSH_AI_STATUS_STYLE}")
+    else
+      region_highlight+=(
+        "$#BUFFER $(( $#BUFFER + $#POSTDISPLAY )) ${ZSH_AI_STATUS_STYLE}")
+    fi
     zle -R
-    (( i = i % $#frames + 1 ))
+    (( tick++ ))
     if [[ -n $_ZSH_AI_HAS_ZSELECT ]]; then
       zselect -t $(( ZSH_AI_SPINNER_INTERVAL / 10 ))  # centiseconds
     else
