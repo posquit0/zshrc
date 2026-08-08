@@ -64,6 +64,9 @@
 # Enable `mise` auto completion
 _completion_cache mise completion zsh
 
+# Enable `herdr` auto completion
+_completion_cache herdr completion zsh
+
 # Enable `terraform` auto completion
 (( $+commands[terraform] )) \
   && complete -o nospace -C "${commands[terraform]}" terraform
