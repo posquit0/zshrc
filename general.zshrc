@@ -172,4 +172,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   if (( $+commands[zoxide] )); then
     eval "$(zoxide init zsh)"
   fi
+
+  if (( $+commands[cw] )); then
+    eval "$(cw init zsh)"
+  fi
 ### }}}
