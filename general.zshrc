@@ -75,8 +75,8 @@ export XDG_CONFIG_HOME="$HOME/.config"
   typeset -U path PATH
   export PATH
 
-  # One-time, expensive PATH setup (subshell forks, `eval`). Guarded with PATH_LOADED so it runs once per login chain
-  # child shells inherit the results (including $GEM_USER_BIN) through the environment.
+  # One-time PATH setup, inherited by child shells through PATH_LOADED.
+  # Child shells inherit the results (including $GEM_USER_BIN) through the environment.
   if [ ! "$PATH_LOADED" = "true" ]; then
     # Extend $PATH with the system binary directories
     path=(/usr/local/bin /usr/local/sbin /usr/bin /usr/sbin $path)
@@ -84,16 +84,22 @@ export XDG_CONFIG_HOME="$HOME/.config"
     if (( $+commands[kiro-cli] )); then
       [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
     fi
+  fi
 
-    ### Homebrew {{{
+  ### Homebrew {{{
+    # Login shells run macOS path_helper, so inherited PATH_LOADED does not
+    # mean Homebrew's PATH order is intact. Keep the architecture-specific setup
+    # before the higher-priority user, mise, and Gem paths below.
+    if [[ "$PATH_LOADED" != "true" ]] || [[ -o login ]]; then
       if [[ $OSTYPE == darwin* && $CPUTYPE == arm64 ]]; then
         eval $(/opt/homebrew/bin/brew shellenv)
-      fi
-      if [[ $OSTYPE == darwin* && $CPUTYPE == i386 ]]; then
+      elif [[ $OSTYPE == darwin* && $CPUTYPE == i386 ]]; then
         eval $(/usr/local/bin/brew shellenv)
       fi
-    ### }}}
+    fi
+  ### }}}
 
+  if [ ! "$PATH_LOADED" = "true" ]; then
     if (( $+commands[kubectl] )); then
       path+=($HOME/.krew/bin)
     fi
