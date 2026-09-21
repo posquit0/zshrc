@@ -16,3 +16,8 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 if [[ -z "$CHEZMOI_GITHUB_ACCESS_TOKEN" ]] && command -v gh >/dev/null 2>&1; then
   export CHEZMOI_GITHUB_ACCESS_TOKEN="$(gh auth token 2>/dev/null)"
 fi
+
+
+# Disable telemetry and tracking
+DISABLE_TELEMETRY=1
+DO_NOT_TRACK=1
