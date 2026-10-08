@@ -45,16 +45,16 @@ Alternative provider/model pairs (choose one):
 
 ```zsh
 export ZSH_AI_PROVIDER=codex
-export ZSH_AI_MODEL=gpt-6-astra
+export ZSH_AI_MODEL=gpt-6.1-sol
 
 # Or use a model available through Kiro:
 export ZSH_AI_PROVIDER=kiro-cli
-export ZSH_AI_MODEL=claude-haiku-4.5
+export ZSH_AI_MODEL=claude-sonnet-5.5
 ```
 
 Model IDs and availability belong to each CLI/account; the helpers do not
 translate names between providers. In particular, Claude Code uses hyphens
-in `claude-haiku-5-5`, while Kiro uses IDs such as `claude-haiku-4.5`.
+in `claude-haiku-5-5`, while Kiro uses IDs such as `claude-sonnet-5.5`.
 Check the CLI's model picker (or `kiro-cli chat --list-models`) for availability.
 
 The first non-empty value wins:
@@ -62,25 +62,66 @@ The first non-empty value wins:
 1. `ZSH_AI_CLAUDE_CODE_MODEL`, `ZSH_AI_CODEX_MODEL`, or `ZSH_AI_KIRO_CLI_MODEL`
    for the selected provider.
 2. `ZSH_AI_MODEL`.
-3. The helper's built-in default: `haiku` for Claude Code; no `--model` for
-   Codex or Kiro, leaving selection to their configuration/runtime defaults.
+3. The helper's built-in default for that provider:
+
+| Provider | Default model |
+| --- | --- |
+| `claude-code` | `claude-haiku-5-5` |
+| `codex` | `gpt-6.1-sol` |
+| `kiro-cli` | `claude-sonnet-5.5` |
 
 Unset a provider-specific override to control that provider through the shared
 variable. An empty string falls through to the next level; it does not disable
-the built-in `haiku` default. These values are resolved on every request.
+the built-in model default. These values are resolved on every request.
 The loading label shows the requested model ID/alias, or the provider name
 when `--model` is omitted; it does not report the server's resolved model.
 
-`haiku` is a moving alias resolved by Claude Code, its provider, and any
-`ANTHROPIC_DEFAULT_HAIKU_MODEL` override. Use a full model ID to pin a version.
-The helper's explicit `--model` takes precedence over Claude's normal saved
-model preference. See the official [Claude model configuration](https://code.claude.com/docs/en/model-config),
+The built-in defaults pin model versions. You can still choose an alias such
+as `haiku`, which Claude Code resolves using its provider and any
+`ANTHROPIC_DEFAULT_HAIKU_MODEL` override. The helper's explicit `--model` takes
+precedence over normal CLI model preferences, including Kiro agent models.
+See the official [Claude model configuration](https://code.claude.com/docs/en/model-config),
 [Codex models](https://learn.chatgpt.com/docs/models?surface=cli), and
 [Kiro headless model selection](https://kiro.dev/docs/cli/headless/#agent-selection).
 
 Use `ZSH_AI_CLAUDE_CODE_OPTS`, `ZSH_AI_CODEX_OPTS`, or `ZSH_AI_KIRO_CLI_OPTS`
-for additional CLI options, with quoted values preserved. Set models through
-the model variables rather than putting `--model` or `-m` in these options.
+for additional CLI options, with quoted values preserved. Direct `--model`,
+`-m`, and `--effort` options are rejected here, as are Codex `-c`/`--config`
+assignments to `model` or `model_reasoning_effort`. Use the dedicated variables
+so flags cannot conflict with the selected settings.
+
+### Reasoning effort
+
+All three CLIs support effort controls, but supported levels depend on the
+selected model and CLI version. The helpers pass the value through to the CLI;
+they do not translate levels or maintain a separate list of supported models.
+Typical levels are `low`, `medium`, `high`, `xhigh`, and `max`; check your CLI's
+model settings before using a level with a different model.
+
+```zsh
+# Prefer quick responses from all providers
+export ZSH_AI_EFFORT=low
+# Override just one provider when needed
+export ZSH_AI_CODEX_EFFORT=medium
+```
+
+The first non-empty value wins: `ZSH_AI_CLAUDE_CODE_EFFORT`,
+`ZSH_AI_CODEX_EFFORT`, or `ZSH_AI_KIRO_CLI_EFFORT` for the selected provider,
+then `ZSH_AI_EFFORT`. If both are empty, no effort option is passed and the
+CLI's existing setting applies. Changing the model alone does not force a
+lower effort setting.
+
+Claude Code and Kiro receive `--effort <value>`. Codex receives
+`-c model_reasoning_effort=<value>`. Replace older configurations such as
+`ZSH_AI_CODEX_OPTS='-c model_reasoning_effort=low'` with
+`ZSH_AI_CODEX_EFFORT=low`. See [Codex configuration](https://learn.chatgpt.com/docs/developer-settings),
+[Claude effort](https://code.claude.com/docs/en/model-config#adjust-effort-level),
+and [Kiro headless options](https://kiro.dev/docs/cli/headless/#agent-selection).
+
+The `ai-commit-msg` script in the chezmoi dotfiles uses the same model defaults,
+model/effort precedence, and extra-option rules. The shell exports the shared
+`ZSH_AI_PROVIDER`, `ZSH_AI_MODEL`, and `ZSH_AI_EFFORT` variables. Export any
+provider-specific overrides yourself so child processes see them too.
 
 
 ## Contributing

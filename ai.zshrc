@@ -5,8 +5,9 @@
 # https://www.posquit0.com/
 
 # Supported AI backends, mapped to the binary that provides them. Each entry
-# also implies two optional overrides, derived from the provider name:
+# also implies optional overrides, derived from the provider name:
 #   ZSH_AI_<PROVIDER>_MODEL   model to use for that provider
+#   ZSH_AI_<PROVIDER>_EFFORT  reasoning effort for that provider
 #   ZSH_AI_<PROVIDER>_OPTS    extra CLI flags, parsed as shell words
 # e.g. ZSH_AI_KIRO_CLI_MODEL=auto ZSH_AI_KIRO_CLI_OPTS='--agent fast'
 typeset -gA _ZSH_AI_PROVIDER_BIN=(
@@ -15,14 +16,11 @@ typeset -gA _ZSH_AI_PROVIDER_BIN=(
   codex       codex
 )
 # Model used when neither ZSH_AI_<PROVIDER>_MODEL nor ZSH_AI_MODEL is non-empty.
-# An empty default omits --model: Kiro uses its agent/settings, and Codex uses
-# its configuration or runtime default. Both also accept explicit model IDs.
-# Claude's haiku alias follows the CLI/provider mapping; use a full model ID
-# in ZSH_AI_MODEL to pin a version (e.g. claude-haiku-5-5).
+# Pin versions rather than following model aliases or personal CLI defaults.
 typeset -gA _ZSH_AI_PROVIDER_MODEL=(
-  claude-code haiku
-  kiro-cli    ''
-  codex       ''
+  claude-code claude-haiku-5-5
+  kiro-cli    claude-sonnet-5.5
+  codex       gpt-6.1-sol
 )
 # Hint shown when a provider returns nothing, usually an auth or quota issue
 typeset -gA _ZSH_AI_PROVIDER_HINT=(
@@ -48,6 +46,9 @@ typeset -gx ZSH_AI_PROVIDER=${ZSH_AI_PROVIDER:-claude-code}
 # Shared model override for all providers, using the selected CLI's model ID.
 # A non-empty ZSH_AI_<PROVIDER>_MODEL takes precedence; empty uses the table above.
 typeset -gx ZSH_AI_MODEL=${ZSH_AI_MODEL:-}
+# Optional reasoning effort; empty leaves the CLI's effort setting unchanged.
+# A non-empty ZSH_AI_<PROVIDER>_EFFORT takes precedence.
+typeset -gx ZSH_AI_EFFORT=${ZSH_AI_EFFORT:-}
 # Highlight style of the loading status (defaults to a comment-like gray)
 : ${ZSH_AI_STATUS_STYLE:=fg=244}
 # Sweep the Instagram gradient across the loading status; 0 keeps it plain
@@ -146,11 +147,13 @@ _zsh_ai_resolve_provider() {
     return 1
   fi
 
-  # ZSH_AI_<PROVIDER>_{MODEL,OPTS}, e.g. ZSH_AI_CLAUDE_CODE_MODEL
+  # ZSH_AI_<PROVIDER>_{MODEL,EFFORT,OPTS}, e.g. ZSH_AI_CLAUDE_CODE_MODEL
   local key=${${provider:u}//-/_}
   local var=ZSH_AI_${key}_MODEL
   local model=${(P)var}
   : ${model:=${ZSH_AI_MODEL:-${_ZSH_AI_PROVIDER_MODEL[$provider]}}}
+  var=ZSH_AI_${key}_EFFORT
+  local effort=${${(P)var}:-$ZSH_AI_EFFORT}
 
   # Split the per-provider flags the way the shell would, so quoted values
   # such as --foo='a b' survive as a single argument
@@ -158,15 +161,26 @@ _zsh_ai_resolve_provider() {
   var=ZSH_AI_${key}_OPTS
   [[ -n ${(P)var} ]] && opts=(${(Q)${(z)${(P)var}}})
 
-  # Model flags here would duplicate --model or bypass the status-line label.
-  local opt
+  # Keep model and effort selection in one place, including Codex config flags.
+  local opt setting config_key
   for opt in "${opts[@]}"; do
+    setting=
     case $opt in
-      --model|--model=*|-m|-m?*)
-        _ZSH_AI_ERROR="set the model with ZSH_AI_MODEL or ZSH_AI_${key}_MODEL, not ${var}"
-        return 1
-        ;;
+      --model|--model=*|-m|-m?*) setting=MODEL ;;
+      --effort|--effort=*) setting=EFFORT ;;
     esac
+    if [[ $provider == codex && $opt == *=* ]]; then
+      config_key=${${${opt#--config=}#-c}#=}
+      config_key=${${config_key%%=*}//[[:space:]]/}
+      case $config_key in
+        model) setting=MODEL ;;
+        model_reasoning_effort) setting=EFFORT ;;
+      esac
+    fi
+    if [[ -n $setting ]]; then
+      _ZSH_AI_ERROR="set ${(L)setting} with ZSH_AI_${setting} or ZSH_AI_${key}_${setting}, not ${var}"
+      return 1
+    fi
   done
 
   case $provider in
@@ -197,6 +211,13 @@ _zsh_ai_resolve_provider() {
       ;;
   esac
   [[ -n $model ]] && _ZSH_AI_ARGV+=(--model "$model")
+  if [[ -n $effort ]]; then
+    if [[ $provider == codex ]]; then
+      _ZSH_AI_ARGV+=(-c "model_reasoning_effort=$effort")
+    else
+      _ZSH_AI_ARGV+=(--effort "$effort")
+    fi
+  fi
   _ZSH_AI_ARGV+=("${opts[@]}")
 
   typeset -g _ZSH_AI_LABEL=${model:-$provider}

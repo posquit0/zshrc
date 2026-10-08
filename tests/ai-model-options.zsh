@@ -4,6 +4,7 @@ hash claude=/bin/sh codex=/bin/sh kiro-cli=/bin/sh
 source "${0:A:h:h}/ai.zshrc"
 unset ZSH_AI_MODEL ZSH_AI_CLAUDE_CODE_MODEL ZSH_AI_CODEX_MODEL ZSH_AI_KIRO_CLI_MODEL
 unset ZSH_AI_CLAUDE_CODE_OPTS ZSH_AI_CODEX_OPTS ZSH_AI_KIRO_CLI_OPTS
+unset ZSH_AI_EFFORT ZSH_AI_CLAUDE_CODE_EFFORT ZSH_AI_CODEX_EFFORT ZSH_AI_KIRO_CLI_EFFORT
 fail() { print -u2 -r -- "FAIL: $*"; exit 1 }
 
 for ZSH_AI_PROVIDER in claude-code codex kiro-cli; do
