@@ -14,10 +14,11 @@ typeset -gA _ZSH_AI_PROVIDER_BIN=(
   kiro-cli    kiro-cli
   codex       codex
 )
-# Model used when neither ZSH_AI_<PROVIDER>_MODEL nor ZSH_AI_MODEL is set.
-# An empty value means "let the provider pick": kiro-cli only exposes `auto`,
-# and codex takes its default from ~/.codex/config.toml (a ChatGPT account
-# rejects most explicit model names anyway).
+# Model used when neither ZSH_AI_<PROVIDER>_MODEL nor ZSH_AI_MODEL is non-empty.
+# An empty default omits --model: Kiro uses its agent/settings, and Codex uses
+# its configuration or runtime default. Both also accept explicit model IDs.
+# Claude's haiku alias follows the CLI/provider mapping; use a full model ID
+# in ZSH_AI_MODEL to pin a version (e.g. claude-haiku-5-5).
 typeset -gA _ZSH_AI_PROVIDER_MODEL=(
   claude-code haiku
   kiro-cli    ''
@@ -44,7 +45,8 @@ typeset -gA _ZSH_AI_PROVIDER_HINT=(
 # so tools launched from the shell (e.g. the lazygit AI commit message command)
 # follow the same choice.
 typeset -gx ZSH_AI_PROVIDER=${ZSH_AI_PROVIDER:-claude-code}
-# Model override applied to every provider; empty means the provider default
+# Shared model override for all providers, using the selected CLI's model ID.
+# A non-empty ZSH_AI_<PROVIDER>_MODEL takes precedence; empty uses the table above.
 typeset -gx ZSH_AI_MODEL=${ZSH_AI_MODEL:-}
 # Highlight style of the loading status (defaults to a comment-like gray)
 : ${ZSH_AI_STATUS_STYLE:=fg=244}
