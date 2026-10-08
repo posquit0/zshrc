@@ -158,7 +158,7 @@ _zsh_ai_resolve_provider() {
 
   case $provider in
     claude-code)
-      _ZSH_AI_ARGV=($bin -p)
+      _ZSH_AI_ARGV=($bin -p --no-session-persistence)
       ;;
     kiro-cli)
       # --wrap never keeps the reply unwrapped for parsing, and --trust-tools=
