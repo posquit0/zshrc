@@ -8,7 +8,7 @@
 # also implies two optional overrides, derived from the provider name:
 #   ZSH_AI_<PROVIDER>_MODEL   model to use for that provider
 #   ZSH_AI_<PROVIDER>_OPTS    extra CLI flags, parsed as shell words
-# e.g. ZSH_AI_KIRO_CLI_OPTS='--agent fast --model auto'
+# e.g. ZSH_AI_KIRO_CLI_MODEL=auto ZSH_AI_KIRO_CLI_OPTS='--agent fast'
 typeset -gA _ZSH_AI_PROVIDER_BIN=(
   claude-code claude
   kiro-cli    kiro-cli
@@ -155,6 +155,17 @@ _zsh_ai_resolve_provider() {
   local -a opts
   var=ZSH_AI_${key}_OPTS
   [[ -n ${(P)var} ]] && opts=(${(Q)${(z)${(P)var}}})
+
+  # Model flags here would duplicate --model or bypass the status-line label.
+  local opt
+  for opt in "${opts[@]}"; do
+    case $opt in
+      --model|--model=*|-m|-m?*)
+        _ZSH_AI_ERROR="set the model with ZSH_AI_MODEL or ZSH_AI_${key}_MODEL, not ${var}"
+        return 1
+        ;;
+    esac
+  done
 
   case $provider in
     claude-code)
