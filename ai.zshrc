@@ -230,7 +230,7 @@ _zsh_ai_first_command() {
 # Run the configured provider in the background, animating a spinner until it
 # finishes. The response is stored in $_ZSH_AI_RESPONSE; returns non-zero when
 # the response is empty, 130 when cancelled with Ctrl+C, and 2 when the
-# provider could not be resolved (reason in $_ZSH_AI_ERROR).
+# provider could not be resolved or failed (reason in $_ZSH_AI_ERROR).
 #
 # The status line is rendered through $POSTDISPLAY (the mechanism
 # zsh-autosuggestions uses): it is part of the editor display, so zle
@@ -238,19 +238,21 @@ _zsh_ai_first_command() {
 # leaves the previous frame behind as a ghost line whenever the message
 # wraps or the prompt sits at the bottom of the screen.
 _zsh_ai_request() {
+  setopt localoptions no_monitor
   local prompt=$1 label=$2
-  local tmp pid
+  local tmp pid exit_code error
   typeset -g _ZSH_AI_RESPONSE=
 
   _zsh_ai_resolve_provider || return 2
-  tmp=$(mktemp) || return 1
+  tmp=$(mktemp -d) || return 1
 
   # Keep the status to one line: strip newlines here, truncate per frame
   label=${label//$'\n'/ }
 
   # </dev/null so a provider that appends piped stdin to the prompt (codex)
   # neither blocks nor competes with zle for the terminal
-  "${_ZSH_AI_ARGV[@]}" "$prompt" </dev/null > "$tmp" 2>/dev/null &!
+  # Keep the job waitable so stdout alone cannot turn a failed run into success.
+  "${_ZSH_AI_ARGV[@]}" "$prompt" </dev/null > "$tmp/stdout" 2> "$tmp/stderr" &
   pid=$!
 
   # On Ctrl+C, kill the request and let the loop exit on its own; the
@@ -295,6 +297,8 @@ _zsh_ai_request() {
       command sleep $(( ZSH_AI_SPINNER_INTERVAL / 1000.0 ))
     fi
   done
+  wait "$pid" 2>/dev/null
+  exit_code=$?
   trap - INT
 
   POSTDISPLAY=$saved_postdisplay
@@ -302,13 +306,21 @@ _zsh_ai_request() {
   zle -R
 
   if (( cancelled )); then
-    command rm -f "$tmp"
+    command rm -rf -- "$tmp"
     zle -M "cancelled"
     return 130
   fi
 
-  _ZSH_AI_RESPONSE=$(_zsh_ai_clean "$(<"$tmp")")
-  command rm -f "$tmp"
+  if (( exit_code != 0 )); then
+    error=$(_zsh_ai_clean "$(<"$tmp/stderr")")
+    error=${error//$'\n'/ }
+    _ZSH_AI_ERROR="${ZSH_AI_PROVIDER} exited with status ${exit_code}${error:+: ${error[1,500]}}"
+    command rm -rf -- "$tmp"
+    return 2
+  fi
+
+  _ZSH_AI_RESPONSE=$(_zsh_ai_clean "$(<"$tmp/stdout")")
+  command rm -rf -- "$tmp"
   [[ -n $_ZSH_AI_RESPONSE ]]
 }
 
