@@ -13,7 +13,8 @@ for ZSH_AI_PROVIDER in claude-code codex kiro-cli; do
   opts_var=ZSH_AI_${key}_OPTS
   ZSH_AI_MODEL=shared-model
   _zsh_ai_resolve_provider || fail 'shared model rejected'
-  [[ $_ZSH_AI_LABEL == shared-model && ${_ZSH_AI_ARGV[-1]} == shared-model ]] || fail 'shared model not applied'
+  model_index=${_ZSH_AI_ARGV[(Ie)--model]}
+  [[ $_ZSH_AI_LABEL == shared-model && ${_ZSH_AI_ARGV[model_index + 1]} == shared-model ]] || fail 'shared model not applied'
 
   typeset -g "$model_var=provider-model"
   typeset -g "$opts_var=--agent 'two words'"

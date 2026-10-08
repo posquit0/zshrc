@@ -22,6 +22,12 @@ typeset -gA _ZSH_AI_PROVIDER_MODEL=(
   kiro-cli    claude-sonnet-5.5
   codex       gpt-6.1-sol
 )
+# Effort used when neither the provider-specific nor shared override is set.
+typeset -gA _ZSH_AI_PROVIDER_EFFORT=(
+  claude-code low
+  kiro-cli    low
+  codex       low
+)
 # Hint shown when a provider returns nothing, usually an auth or quota issue
 typeset -gA _ZSH_AI_PROVIDER_HINT=(
   claude-code 'check `claude /login` or quota'
@@ -46,7 +52,7 @@ typeset -gx ZSH_AI_PROVIDER=${ZSH_AI_PROVIDER:-claude-code}
 # Shared model override for all providers, using the selected CLI's model ID.
 # A non-empty ZSH_AI_<PROVIDER>_MODEL takes precedence; empty uses the table above.
 typeset -gx ZSH_AI_MODEL=${ZSH_AI_MODEL:-}
-# Optional reasoning effort; empty leaves the CLI's effort setting unchanged.
+# Shared reasoning effort override; empty uses the provider's default above.
 # A non-empty ZSH_AI_<PROVIDER>_EFFORT takes precedence.
 typeset -gx ZSH_AI_EFFORT=${ZSH_AI_EFFORT:-}
 # Highlight style of the loading status (defaults to a comment-like gray)
@@ -153,7 +159,7 @@ _zsh_ai_resolve_provider() {
   local model=${(P)var}
   : ${model:=${ZSH_AI_MODEL:-${_ZSH_AI_PROVIDER_MODEL[$provider]}}}
   var=ZSH_AI_${key}_EFFORT
-  local effort=${${(P)var}:-$ZSH_AI_EFFORT}
+  local effort=${${(P)var}:-${ZSH_AI_EFFORT:-${_ZSH_AI_PROVIDER_EFFORT[$provider]}}}
 
   # Split the per-provider flags the way the shell would, so quoted values
   # such as --foo='a b' survive as a single argument

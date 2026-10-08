@@ -20,13 +20,16 @@ for ZSH_AI_PROVIDER in claude-code codex kiro-cli; do
   key=${${ZSH_AI_PROVIDER:u}//-/_}
   effort_var=ZSH_AI_${key}_EFFORT
   opts_var=ZSH_AI_${key}_OPTS
-  _zsh_ai_resolve_provider || fail 'default resolution'
-  [[ ${_ZSH_AI_ARGV[-2]} == --model && ${_ZSH_AI_ARGV[-1]} == ${_ZSH_AI_PROVIDER_MODEL[$ZSH_AI_PROVIDER]} ]] || fail 'default model or omitted effort'
-  ZSH_AI_EFFORT=low
   check_effort low
+  model_index=${_ZSH_AI_ARGV[(Ie)--model]}
+  [[ ${_ZSH_AI_ARGV[model_index + 1]} == ${_ZSH_AI_PROVIDER_MODEL[$ZSH_AI_PROVIDER]} ]] || fail 'default model'
+  ZSH_AI_EFFORT=medium
+  check_effort medium
   typeset -g "$effort_var=high"
   check_effort high
   typeset -g "$effort_var="
+  check_effort medium
+  ZSH_AI_EFFORT=''
   check_effort low
   for flags in '--effort high' '--effort=high'; do
     typeset -g "$opts_var=$flags"
@@ -48,4 +51,4 @@ _zsh_ai_resolve_provider && fail 'accepted config model override'
 ZSH_AI_CODEX_OPTS='-c model_verbosity=low --profile "two words"'
 _zsh_ai_resolve_provider || fail 'unrelated config rejected'
 [[ ${_ZSH_AI_ARGV[-1]} == 'two words' ]] || fail 'quoted option changed'
-print 'PASS: default models, effort omission/precedence, CLI mappings, option conflicts'
+print 'PASS: default models, low effort defaults/precedence, CLI mappings, option conflicts'
