@@ -19,5 +19,5 @@ fi
 
 
 # Disable telemetry and tracking
-DISABLE_TELEMETRY=1
-DO_NOT_TRACK=1
+export DISABLE_TELEMETRY=1
+export DO_NOT_TRACK=1
