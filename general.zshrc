@@ -135,6 +135,17 @@ export XDG_CONFIG_HOME="$HOME/.config"
 
   [ -n "$GEM_USER_BIN" ] && path=($GEM_USER_BIN $path)
 
+  # Rex CLI
+  if (( ! $+commands[rex] )); then
+    for _rex_bin in /Applications/Rex{," Beta"}.app/Contents/Helpers/"Rex Server.rex"/Contents/MacOS/rex; do
+      if [[ -x "$_rex_bin" ]]; then
+        path+=("${_rex_bin:h}")
+        break
+      fi
+    done
+    unset _rex_bin
+  fi
+
   # Go PATH
   if (( $+commands[go] )); then
     export GOPATH=$HOME/go
