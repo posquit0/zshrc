@@ -193,4 +193,12 @@ export XDG_CONFIG_HOME="$HOME/.config"
   if (( $+commands[cw] )); then
     eval "$(cw init zsh)"
   fi
+
+  # Open $BROWSER URLs in a multiplexer pane (herdr, Rex, Herdr.app)
+  if (( $+commands[mux-pane-browser] )); then
+    if [[ -n $HERDR_PANE_ID || -n $REX_BLOCK ]] \
+      || { [[ -n $HC_TERMINAL_ID ]] && pgrep -qx Herdr }; then
+      export BROWSER=$commands[mux-pane-browser]
+    fi
+  fi
 ### }}}
